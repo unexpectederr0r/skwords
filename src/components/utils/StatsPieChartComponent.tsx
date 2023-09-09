@@ -8,8 +8,8 @@ import { Text } from "@rneui/themed"
     ================================
 */
 export default function StatsPieChartComponent({orderedArrayOfMostPlayedCategories,...props}){
-    
-    /// data is ORDERDER already so 
+
+    /// data is already ORDERED
     let pieData = []
     let totalSkChallengesPlayed = 0
     for (let index = 0; index < orderedArrayOfMostPlayedCategories.length; index++) {
@@ -33,18 +33,20 @@ export default function StatsPieChartComponent({orderedArrayOfMostPlayedCategori
             default:
                 // All the other categories (if they exist) that are not in the top 3 most used are display as 'other'
                 if(pieData[3]==null){
-                    pieData[3] = {value: orderedArrayOfMostPlayedCategories[index][1], color: '#BDB2FA', gradientCenterColor: '#8F80F3'}
+                    pieData[3] = {value: orderedArrayOfMostPlayedCategories[index][1]}
                     totalSkChallengesPlayed += orderedArrayOfMostPlayedCategories[index][1]
                 }else{
-                    pieData[3] = {value: pieData[3]+orderedArrayOfMostPlayedCategories[index][1]}
+                    pieData[3] = {value: pieData[3].value+orderedArrayOfMostPlayedCategories[index][1]}
                     totalSkChallengesPlayed += orderedArrayOfMostPlayedCategories[index][1]
                 }
                 break;
         }
     }
-    console.log("totalSkChallengesPlayed",totalSkChallengesPlayed)
-    console.log("orderedArrayOfMostPlayedCategories",orderedArrayOfMostPlayedCategories)
-    console.log("pieData",pieData)
+    // Add the color to the 'other categories' slice of the pie chart if it is defined
+    if(pieData[3]!=null){
+        pieData[3].color = '#FFA5BA'
+        pieData[3].gradientCenterColor = '#FF7F97'
+    }
 
     const renderDot = color => {
         return (
@@ -83,8 +85,8 @@ export default function StatsPieChartComponent({orderedArrayOfMostPlayedCategori
                 }
                 {pieData[3]?
                 <View style={{flexDirection: 'row', alignItems: 'center', }}>
-                    {renderDot('#FF7F97')}
-                    <Text>Others: {Math.floor(pieData[3].value/totalSkChallengesPlayed)}%</Text>
+                    {renderDot('#FFA5BA')}
+                    <Text>Others: {Math.floor((pieData[3].value/totalSkChallengesPlayed)*100)}%</Text>
                 </View>
                 :
                 null

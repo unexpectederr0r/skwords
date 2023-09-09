@@ -7,81 +7,95 @@ Changes had been made to match the UI style of the app and sync the category sta
 *****************************************
 *****************************************
 */
-import { Text, useTheme } from "@rneui/themed"
+import { Icon, Text, useTheme } from "@rneui/themed"
 import React, { useEffect, useRef, useState } from 'react'
-import { StyleSheet, View, useColorScheme } from 'react-native'
+import { Alert, StyleSheet, View, useColorScheme } from 'react-native'
 import { Dropdown } from 'react-native-element-dropdown'
 import { firebase } from '../../firebaseConfig'
-import { useChallengeDetailsObjectSharedValue } from '../context/ChallengeDetailsObjectProvider'
+import { useHomescreenFilterCategorySharedValue } from "../context/HomescreenFilterCategorySharedValueProvider"
 
-export default function DropdownComponent(props){
+export default function FilterCategoryComponent(props){
 
-  const [categoryData,setCategoryData] = useState([])
+  const [categoryData,setCategoryData] = useState([])  
+  const colorMode = useColorScheme()
+  const { theme, updateTheme } = useTheme()
+  const { sharedValue: filterCategorySharedValue, setSharedValue: setFilterCategorySharedValue } = useHomescreenFilterCategorySharedValue()
 
-  const { sharedValue, setSharedValue } = useChallengeDetailsObjectSharedValue()
-
-  const categoryInputRef = useRef(null)
+  const arrayOfCategoriesRef = useRef([])
 
   function successFetching(QuerySnapshot){
-    let arrayOfCategories = []
     QuerySnapshot.forEach((doc)=>{
         //console.log("doc category",doc)
         //console.log("category",doc.data().categoryName)
         let sanitizedUid = null;
         try {
           sanitizedUid = doc.data().uid.trim()
+          arrayOfCategoriesRef.current.push({label:doc.data().categoryName, value:sanitizedUid})
         } catch (error) {
-          
+          Alert.alert('Warning','An error has occurred while fetching the available categories, the category filter may not work.',[{text:'OK',style:'default'}])
         }
-        arrayOfCategories.push({label:doc.data().categoryName, value:sanitizedUid})
     })
-    setCategoryData(arrayOfCategories)
+    setCategoryData([...arrayOfCategoriesRef.current])
   }
   function errorFetching(){
 
   }
 
-  const colorMode = useColorScheme()
-  const { theme, updateTheme } = useTheme()
+  useEffect(()=>{
+    // The following if will be true on the first render and when the user 'pulls to refresh' the screen, here the category will be resetted
+    if(('challengeCategoryLabel' in filterCategorySharedValue)==false){
+      setCategoryData([...arrayOfCategoriesRef.current])
+    }
+  },[filterCategorySharedValue])
+
+  
 
   const styles = StyleSheet.create({
       container: {
           //backgroundColor: theme.colors.background,
           //backgroundColor: 'red',
-          marginHorizontal:10
+          //marginHorizontal:10
           //padding: 16,
       },
       dropdown: {
+        
           backgroundColor: theme.colors.background,
           //backgroundColor: 'red',
           height: props.height?props.height:null,
           //borderColor: 'gray',
-          borderBottomColor: theme.colors.grey3,            
-          borderBottomWidth: 1,
-          //borderRadius: 8,
-          paddingHorizontal: 2,
+          //borderBottomColor: theme.colors.grey3,
+          //borderBottomWidth: 1,
+          borderColor: colorMode==='dark'?'white':theme.colors.grey0,
+          borderWidth: 1,
+          borderRadius: 40,
+          paddingHorizontal: 10,
           textTransform: "capitalize"
       },
       placeholderStyle: {
-          fontSize: 18,
-          color:colorMode==='dark'?theme.colors.grey3:'rgba(36, 36, 36,0.55)',
+          marginLeft:5,
+          fontSize: 16,
+          color:colorMode==='dark'?'white':'rgba(36, 36, 36,0.55)',
           textTransform: "capitalize"
       },
       selectedTextStyle: {
           fontSize: 16,
-          color:colorMode==='dark'?'white':'black',
+          color:colorMode==='dark'?theme.colors.secondary:theme.colors.secondary,
           paddingLeft: 10,
           textTransform: "capitalize"
       },
       inputSearchStyle: {
-          height: 40,
+          //height: 40,
           fontSize: 16,
           textTransform: "capitalize",
-          //color:colorMode==='dark'?theme.colors.grey3:'black',
+          color:colorMode==='dark'?theme.colors.grey3:theme.colors.grey0,
       },
       categoriesItemTextStyle: {        
         textTransform: "capitalize",        
       },
+      iconStyle:{
+        width: 20,
+        height: 20,
+      }
       
   })
   const [isFocus, setIsFocus] = useState(false)
@@ -90,25 +104,8 @@ export default function DropdownComponent(props){
     firebase.firestore().collection('callengesCategories').onSnapshot(successFetching, errorFetching)
   },[])
 
-  const renderLabel = () => {    
-    /*
-      Explanation of the context value "challengeCategorySpecialDropdownItem":
-        Due to the interal implementation of the third party library being used in this component "react-native-element-dropdown", the dropdown 
-        selection is actually internally identified by **a special object** (named 'item' in the documentation) generated by the library (i.e.: NOT by a string label), so its value is stored in the react-context-state "sharedValue.challengeCategorySpecialDropdownItem"
-    */
-    if (sharedValue.challengeCategorySpecialDropdownItem || isFocus) {
-      return (
-        <Text style={isFocus && { color: theme.colors.primary }}>
-          Category
-        </Text>
-      );
-    }
-    return null;
-  }  
-
   return (
     <View style={styles.container}>
-      {renderLabel()}
       <Dropdown
         mode='default'
         style={[styles.dropdown, isFocus && { borderColor: theme.colors.primary }]}
@@ -116,22 +113,29 @@ export default function DropdownComponent(props){
         selectedTextStyle={styles.selectedTextStyle}
         inputSearchStyle={styles.inputSearchStyle}
         itemTextStyle={styles.categoriesItemTextStyle}
-        /* iconStyle={styles.iconStyle} */
+        iconStyle={styles.iconStyle}
         data={categoryData}
         search
         maxHeight={300}
         labelField="label"
         valueField="value"
+        value={'hey'}
         placeholder={!isFocus ? 'Category' : '...'}
         searchPlaceholder="Search..."
-        // As explained above, value is not a plain string, it's an object named 'item' by the library documentation.
-        value={sharedValue.challengeCategorySpecialDropdownItem}
+        renderLeftIcon={
+          ()=>(
+            <Icon name='filter' type='ionicon' color={colorMode==='dark'?'white':theme.colors.grey0}
+            />
+          )
+        }
         onFocus={() => setIsFocus(true)}
         onBlur={() => setIsFocus(false)}
         onChange={item => {
           // Extract the string label from the item object 
-          categoryInputRef.current=item.label          
-          setSharedValue({...sharedValue,challengeCategoryLabel:item.label,challengeCategoryUid:item.value,challengeCategorySpecialDropdownItem:item.value})
+          //categoryInputRef.current=item.label          
+          console.log("onchange item", item)
+          setFilterCategorySharedValue({challengeCategoryLabel:item.label,challengeCategoryUid:item.value})
+          //setSharedValue({...sharedValue,challengeCategoryLabel:item.label,challengeCategoryUid:item.value,challengeCategorySpecialDropdownItem:item.value})
           setIsFocus(false)
         }}
       />

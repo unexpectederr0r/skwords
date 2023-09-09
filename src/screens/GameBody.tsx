@@ -1,5 +1,5 @@
 import React, {useEffect, useState, MutableRefObject} from "react"
-import { StyleSheet, View, SafeAreaView, Text, TouchableOpacity, useColorScheme, Alert, Keyboard, TouchableWithoutFeedback, BackHandler} from "react-native"
+import { StyleSheet, View, SafeAreaView, Text, TouchableOpacity, useColorScheme, Alert, Keyboard, TouchableWithoutFeedback, BackHandler, useWindowDimensions} from "react-native"
 import { Text as RNEText, Icon, useTheme, Dialog, Input, Button as RNEButton} from "@rneui/themed"
 import LigthningSVG from '../assets/images/misc/lightning.svg'
 import { ChallengeDataDocumentInterface, ChallengeIndexDocumentInterface } from "../components/utils/firebaseUtils/types/firebaseDocumentInterfaces"
@@ -9,82 +9,8 @@ import { updateNumberOfSkPointsBy } from "../components/utils/firebaseUtils/upda
 import { useUserMetadataSharedValue } from "../context/UserMetadataProvider"
 import { updateStatsOfPlayedChallenge } from "../components/utils/firebaseUtils/updateStatsOfPlayedChallenge"
 import { updateSkPointsHistory } from "../components/utils/firebaseUtils/updateSkPointsHistory"
-const CharacterComponent = ({ index, playerCharacter, wordToDiscover, guessAlreadyUsed}) => {
-  
-  //let letter = useCharacterGuessInput[index]
-  let wordLetter = wordToDiscover[index]
-  
-  //const blockStyles: any[] = [styles.guessSquare]
-  //const textStyles: any[] = [styles.guessLetter]
 
-  // convert to lowecase
-  //playerCharacter = playerCharacter.toLowerCase()
 
-  const blockStyles = [styles.guessSquare]
-  const textStyles = [styles.guessLetter]
-
-  if (playerCharacter.toLowerCase() === wordLetter && guessAlreadyUsed) {
-    blockStyles.push(styles.guessCorrect)
-    textStyles.push(styles.guessedLetter)
-  } else if (wordToDiscover.includes(playerCharacter.toLowerCase()) && guessAlreadyUsed) {
-    blockStyles.push(styles.guessInWord)
-    textStyles.push(styles.guessedLetter)
-  } else if (guessAlreadyUsed) {
-    blockStyles.push(styles.guessNotInWord)
-    textStyles.push(styles.guessedLetter)
-  }
-
-  return (
-    <View style={blockStyles}>
-      <Text style={textStyles}>{playerCharacter}</Text>
-    </View>
-  )
-}
-
-const GuessRow = ({guess,wordToDiscover,guessAlreadyUsed}) => {    
-  return (
-    <View style={styles.guessRow}>
-      {Array.apply(null, Array(wordToDiscover.length)).map(function (item,index) {
-        return(
-          <CharacterComponent key={index} index={index} playerCharacter={guess[index]} wordToDiscover={wordToDiscover} guessAlreadyUsed={guessAlreadyUsed} />
-        )
-      })}
-    </View>
-  )
-}
-
-const KeyboardRow = ({ arrayOfCharacters, onKeyPress}) => (
-  <View style={styles.keyboardRow}>
-    {arrayOfCharacters.map(character => (
-      <TouchableOpacity onPress={() => onKeyPress(character)} key={character}>
-        <View style={styles.key}>
-          <Text style={styles.keyLetter}>{character}</Text>
-        </View>
-      </TouchableOpacity>
-    ))}
-  </View>
-)
-
-const KeyboardComponent = ({ onKeyPress }) => {
-  const charactersInKeyboardFirstRow = ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"]
-  const charactersInKeyboardSecondRow = ["A", "S", "D", "F", "G", "H", "J", "K", "L"]
-  const charactersInKeyboardThirdRow = ["Z", "X", "C", "V", "B", "N", "M", "⌫"]
-
-  return (
-    <View style={styles.keyboard}>
-      <KeyboardRow arrayOfCharacters={charactersInKeyboardFirstRow} onKeyPress={onKeyPress} />
-      <KeyboardRow arrayOfCharacters={charactersInKeyboardSecondRow} onKeyPress={onKeyPress} />
-      <KeyboardRow arrayOfCharacters={charactersInKeyboardThirdRow} onKeyPress={onKeyPress} />
-      <View style={styles.keyboardRow}>
-        <TouchableOpacity onPress={() => onKeyPress("SUBMIT")}>
-          <View style={styles.key}>
-            <Text style={styles.keyLetter}>SUBMIT</Text>
-          </View>
-        </TouchableOpacity>
-      </View>
-    </View>
-  )
-}
 
 //let challengeData = null
 let colorMode = null
@@ -190,6 +116,189 @@ export default function GameBody({challengeData, challengeIndexData, navigation,
     }
   },[timerRunOut])
 
+  const {height: screenHeight, width: screenWidth} = useWindowDimensions()
+
+  const styles = StyleSheet.create({
+    guessRow: {
+      flexDirection: "row",
+      justifyContent: "center",
+    },
+    guessSquare: {
+      borderColor: "#d3d6da",
+      borderWidth: 2,
+      // By default the size of the box for the character is 50 but if giving the length of the word, the sum of the boxes exceeds 80% of the width, decrease the box width
+      // Notice that the '5' value multiplied by the length of the word-to-discover is for the margin between the boxes
+      width:((wordToDiscover.length * 50) > Math.floor(screenWidth*0.8-wordToDiscover.length * 5))?Math.floor(Math.floor(screenWidth*0.8-wordToDiscover.length * 5)/wordToDiscover.length):50,
+      // set maxWidth and min Width
+      maxWidth: 50,
+      minWidth: 7,
+      height: 50,
+      alignItems: "center",
+      justifyContent: "center",
+      margin: 5,
+    },
+    guessLetter: {
+      fontSize: 20,
+      fontWeight: "bold",
+      color: "#878a8c",
+    },
+    guessedLetter: {
+      color: "#fff",
+    },
+    guessCorrect: {
+      backgroundColor: "#6aaa64",
+      borderColor: "#6aaa64",
+    },
+    guessInWord: {
+      backgroundColor: "#c9b458",
+      borderColor: "#c9b458",
+    },
+    guessNotInWord: {
+      backgroundColor: "#787c7e",
+      borderColor: "#787c7e",
+    },
+
+    container: {
+      justifyContent: "space-between",
+      flex: 1,    
+    },
+
+    // keyboard
+    keyboard: { flexDirection: "column" },
+    keyboardRow: {
+      flexDirection: "row",
+      justifyContent: "center",
+      marginBottom: 5,
+    },
+    key: {
+      backgroundColor: "#d3d6da",
+      padding: 10,
+      margin: 3,
+      borderRadius: 5,
+    },
+    keyLetter: {
+      fontWeight: "500",
+      fontSize: 15,
+    },
+
+    // Game complete
+    gameCompleteWrapper: {
+      alignItems: "center",
+    },
+    bold: {
+      fontWeight: "bold",
+    },
+    lightningButtonTouchableOpacity:{
+      borderColor: "#d3d6da",
+      borderWidth: 0,
+      borderRadius: 50,
+      // same formula as for the character boxes but always substract 10 points for the hints lightning circle
+      width:((wordToDiscover.length * 50) > Math.floor(screenWidth*0.8-wordToDiscover.length * 5))?Math.floor(Math.floor(screenWidth*0.8-wordToDiscover.length * 5)/wordToDiscover.length)-10:40,
+      height:((wordToDiscover.length * 50) > Math.floor(screenWidth*0.8-wordToDiscover.length * 5))?Math.floor(Math.floor(screenWidth*0.8-wordToDiscover.length * 5)/wordToDiscover.length)-10:40,
+      alignItems: "center",
+      justifyContent: "center",
+      marginHorizontal: 10,
+      marginTop:10,
+      overflow:'hidden',
+      backgroundColor:'black',    
+    },
+    overlay: {    
+      borderColor: "#d3d6da",
+      borderWidth: 0,
+      borderRadius: 50,
+      width: 40,
+      height: 40,
+      alignItems: "center",
+      justifyContent: "center",
+      marginHorizontal: 10,
+      marginTop:10,
+      overflow:'hidden',
+      backgroundColor:'black',
+    },
+    buttonSVG:{
+      flex:1,
+      height:100,
+      width:100,    
+      /* height:24,
+      width:24,
+      fontSize: 20,
+      fontWeight: "bold",
+      color: "#878a8c", */
+    }
+  })
+
+  const CharacterComponent = ({ index, playerCharacter, wordToDiscover, guessAlreadyUsed}) => {
+  
+    let wordLetter = wordToDiscover[index]
+    
+    // convert to lowecase
+  
+    const blockStyles = [styles.guessSquare]
+    const textStyles = [styles.guessLetter]
+  
+    if (playerCharacter.toLowerCase() === wordLetter && guessAlreadyUsed) {
+      blockStyles.push(styles.guessCorrect)
+      textStyles.push(styles.guessedLetter)
+    } else if (wordToDiscover.includes(playerCharacter.toLowerCase()) && guessAlreadyUsed) {
+      blockStyles.push(styles.guessInWord)
+      textStyles.push(styles.guessedLetter)
+    } else if (guessAlreadyUsed) {
+      blockStyles.push(styles.guessNotInWord)
+      textStyles.push(styles.guessedLetter)
+    }
+  
+    return (
+      <View style={blockStyles}>
+        <Text style={textStyles}>{playerCharacter}</Text>
+      </View>
+    )
+  }
+  
+  const GuessRow = ({guess,wordToDiscover,guessAlreadyUsed}) => {    
+    return (
+      <View style={styles.guessRow}>
+        {Array.apply(null, Array(wordToDiscover.length)).map(function (item,index) {
+          return(
+            <CharacterComponent key={index} index={index} playerCharacter={guess[index]} wordToDiscover={wordToDiscover} guessAlreadyUsed={guessAlreadyUsed} />
+          )
+        })}
+      </View>
+    )
+  }
+  
+  const KeyboardRow = ({ arrayOfCharacters, onKeyPress}) => (
+    <View style={styles.keyboardRow}>
+      {arrayOfCharacters.map(character => (
+        <TouchableOpacity onPress={() => onKeyPress(character)} key={character}>
+          <View style={styles.key}>
+            <Text style={styles.keyLetter}>{character}</Text>
+          </View>
+        </TouchableOpacity>
+      ))}
+    </View>
+  )
+  
+  const KeyboardComponent = ({ onKeyPress }) => {
+    const charactersInKeyboardFirstRow = ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"]
+    const charactersInKeyboardSecondRow = ["A", "S", "D", "F", "G", "H", "J", "K", "L"]
+    const charactersInKeyboardThirdRow = ["Z", "X", "C", "V", "B", "N", "M", "⌫"]
+  
+    return (
+      <View style={styles.keyboard}>
+        <KeyboardRow arrayOfCharacters={charactersInKeyboardFirstRow} onKeyPress={onKeyPress} />
+        <KeyboardRow arrayOfCharacters={charactersInKeyboardSecondRow} onKeyPress={onKeyPress} />
+        <KeyboardRow arrayOfCharacters={charactersInKeyboardThirdRow} onKeyPress={onKeyPress} />
+        <View style={styles.keyboardRow}>
+          <TouchableOpacity onPress={() => onKeyPress("SUBMIT")}>
+            <View style={styles.key}>
+              <Text style={styles.keyLetter}>SUBMIT</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      </View>
+    )
+  }
+
   function getSecondsLeft():number{
     return countdownTimerMinutesRef.current * 60 + countdownTimerSecondsRef.current
   }
@@ -201,8 +310,8 @@ export default function GameBody({challengeData, challengeIndexData, navigation,
       content===true?(totalHintsUsed+=1):null
     })
 
-    console.log('characterHintUsedMapArray',characterHintUsedMapArray)
-    console.log('characterHintUsedMapArray.length',characterHintUsedMapArray.length)
+    /* console.log('characterHintUsedMapArray',characterHintUsedMapArray)
+    console.log('characterHintUsedMapArray.length',characterHintUsedMapArray.length) */
 
    //const secondsLeft:number = countdownTimerMinutesRef.current * 60 + countdownTimerSecondsRef.current
    const secondsLeft:number = getSecondsLeft()
@@ -212,8 +321,8 @@ export default function GameBody({challengeData, challengeIndexData, navigation,
    console.log('maxNumberOfSeconds',maxNumberOfSeconds) */
    const timeFactorRatio:number = (secondsLeft / maxNumberOfSeconds)
 
-    console.log('totalHintsUsed',totalHintsUsed)
-    console.log('characterHintUsedMapArray.length',characterHintUsedMapArray.length)
+    /* console.log('totalHintsUsed',totalHintsUsed)
+    console.log('characterHintUsedMapArray.length',characterHintUsedMapArray.length) */
    const hintsUsedFactorRatio:number = 1 -  (1 * (totalHintsUsed / characterHintUsedMapArray.length))
 
    // ******************** should this be proportional or more like 70% 30%
@@ -273,7 +382,7 @@ export default function GameBody({challengeData, challengeIndexData, navigation,
     setReloadMemoizedCountdownTimer(true)
     const playerScoreAsPercentage:number = calculatePlayerScoreAsPercentage()    
     const penalizedSkPoints:number = calculatePenalizedSkPoints(playerScoreAsPercentage)
-    console.log('penalizedSkPoints',penalizedSkPoints)
+    //console.log('penalizedSkPoints',penalizedSkPoints)
     // Notice the negative number (-1) mutipliying the number of penalized skPoints
     await updateSkPointsHistory(USER_UID,((-1)*penalizedSkPoints)).catch(()=>{
       Alert.alert('Warning', "There was an error updating your statistics in the database, the 'My Stats' tab may not reflect accurate information", [{text: 'OK',}])    
@@ -541,7 +650,7 @@ export default function GameBody({challengeData, challengeIndexData, navigation,
             </Dialog.Actions>
           </Dialog>
           {showSolveHintComponent?<SolveRevealCharacterComponent navigation={navigation} question={statefulHintQuestion} correctAnswer={statefulHintAnswer} />:null}                  
-          <View style={{flexDirection: "row",justifyContent: "center",}}>
+          <View style={{flexDirection: "row",justifyContent: "center"}}>
             {Array.apply(null, Array(wordToDiscover.length)).map(function (item,index) {
               return(
                 <TouchableOpacity key={index} onPress={()=>handleShowHint(index)} style={[styles.lightningButtonTouchableOpacity,{backgroundColor:characterHintUsedMapArray[index]===true?theme.colors.background:styles.lightningButtonTouchableOpacity.backgroundColor}]} disabled={characterHintUsedMapArray[index] || disableVirtualKeyboardInput}>                          
@@ -572,109 +681,8 @@ export default function GameBody({challengeData, challengeIndexData, navigation,
           </View>
         </SafeAreaView>
       </ThemeAwareSafeAreaView>
-  )
-    
+  ) 
 }
 
-const styles = StyleSheet.create({
-  guessRow: {
-    flexDirection: "row",
-    justifyContent: "center",
-  },
-  guessSquare: {
-    borderColor: "#d3d6da",
-    borderWidth: 2,
-    width: 50,
-    height: 50,
-    alignItems: "center",
-    justifyContent: "center",
-    margin: 5,
-  },
-  guessLetter: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#878a8c",
-  },
-  guessedLetter: {
-    color: "#fff",
-  },
-  guessCorrect: {
-    backgroundColor: "#6aaa64",
-    borderColor: "#6aaa64",
-  },
-  guessInWord: {
-    backgroundColor: "#c9b458",
-    borderColor: "#c9b458",
-  },
-  guessNotInWord: {
-    backgroundColor: "#787c7e",
-    borderColor: "#787c7e",
-  },
+  
 
-  container: {
-    justifyContent: "space-between",
-    flex: 1,    
-  },
-
-  // keyboard
-  keyboard: { flexDirection: "column" },
-  keyboardRow: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginBottom: 5,
-  },
-  key: {
-    backgroundColor: "#d3d6da",
-    padding: 10,
-    margin: 3,
-    borderRadius: 5,
-  },
-  keyLetter: {
-    fontWeight: "500",
-    fontSize: 15,
-  },
-
-  // Game complete
-  gameCompleteWrapper: {
-    alignItems: "center",
-  },
-  bold: {
-    fontWeight: "bold",
-  },
-  lightningButtonTouchableOpacity:{
-    borderColor: "#d3d6da",
-    borderWidth: 0,
-    borderRadius: 50,
-    width: 40,
-    height: 40,
-    alignItems: "center",
-    justifyContent: "center",
-    marginHorizontal: 10,
-    marginTop:10,
-    overflow:'hidden',
-    backgroundColor:'black',    
-  },
-  overlay: {    
-    borderColor: "#d3d6da",
-    borderWidth: 0,
-    borderRadius: 50,
-    width: 40,
-    height: 40,
-    alignItems: "center",
-    justifyContent: "center",
-    marginHorizontal: 10,
-    marginTop:10,
-    overflow:'hidden',
-    backgroundColor:'black',
-  },
-  buttonSVG:{
-    flex:1,
-    height:100,
-    width:100,    
-    /* height:24,
-    width:24,
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#878a8c", */
-  }
-})

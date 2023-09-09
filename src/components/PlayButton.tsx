@@ -26,9 +26,10 @@ export default function PlayButtonComponent({challengeIndexData,...props}:PlayBu
         color: 'white',
       },
     })
+    console.log("PlayButtonComponent")
     return(      
       <View style={props.style}>
-        <Pressable style={styles.buttonContainer} onPress={()=>{props.navigation.push('PlayScreen',{challengeIndexUid: props.challengeIndexUid,challengeUid: challengeIndexData.challengeUid, challengeIndexData: challengeIndexData})}}>
+        <Pressable style={styles.buttonContainer} onPress={()=>{props.navigation.push('PlayScreen',{challengeIndexUid:challengeIndexData.challengeIndexUid, challengeDataUid:challengeIndexData.challengeDataUid, challengeIndexData:challengeIndexData})}}>
           <Icon name= 'play' type= 'font-awesome' size= {props.fontSize?props.fontSize:15} color= 'white'/>
           <Text style={styles.text}>Play</Text>
         </Pressable>

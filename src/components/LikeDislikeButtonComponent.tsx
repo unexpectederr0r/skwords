@@ -4,10 +4,12 @@ import { Alert, Pressable, StyleSheet, View } from "react-native"
 import { useUserMetadataSharedValue } from "../context/UserMetadataProvider"
 import { isChallengeLikedOrDislikedByUser } from "./utils/firebaseUtils/isChallengeLikedOrDislikedByUser"
 import { updateLikeCountBy } from "./utils/firebaseUtils/updateLikeCountBy"
-export default function LikeDislikeComponent(props){
+export default function LikeDislikeComponent({challengeIndexData,...props}){
   const { sharedValue: userMetadataSharedValue } =useUserMetadataSharedValue()    
 
-  const [statefulLikeCount,setStatefulLikeCount] = useState(props.challengeIndexData.likeCount)
+  let parsedChallengeIndexData = {...challengeIndexData}
+  
+  const [statefulLikeCount,setStatefulLikeCount] = useState(parsedChallengeIndexData.likeCount)
   const [statefulIsLikedByUser,setStatefulIsLikedByUser] = useState(undefined)
   const styles = StyleSheet.create({
       flexChild:{
@@ -17,15 +19,13 @@ export default function LikeDislikeComponent(props){
           borderRadius:50
       }
   })
-  //console.log(props.fontSize)
-
 
   let handleWasLikedOrDislikedIsRunning = false
   async function handleWasLikedOrDisliked(isLiked){
     if(!handleWasLikedOrDislikedIsRunning){
       // set flag on so function can not be called simultanenously
       handleWasLikedOrDislikedIsRunning = true
-      updateLikeCountBy(userMetadataSharedValue.uid,props.challengeIndexUid,isLiked).then((currentLikeCount)=>{          
+      updateLikeCountBy(userMetadataSharedValue.uid,challengeIndexData.challengeIndexUid,isLiked).then((currentLikeCount)=>{          
           handleWasLikedOrDislikedIsRunning = false
           setStatefulLikeCount(currentLikeCount)
         }
@@ -41,7 +41,7 @@ export default function LikeDislikeComponent(props){
   }
 
   useEffect(()=>{
-    isChallengeLikedOrDislikedByUser(userMetadataSharedValue.uid,props.challengeIndexUid).then((challengeIsLikedByUser)=>{      
+    isChallengeLikedOrDislikedByUser(userMetadataSharedValue.uid,challengeIndexData.challengeIndexUid).then((challengeIsLikedByUser)=>{      
       if(challengeIsLikedByUser){
         setStatefulIsLikedByUser(true)
       }else if(challengeIsLikedByUser === false){

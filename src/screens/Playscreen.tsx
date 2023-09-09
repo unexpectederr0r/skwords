@@ -29,35 +29,30 @@ export default function PlayScreen({navigation,route}) {
   const [fetchingChallengeData, setFetchingChallengeData] = useState<boolean>(true)  
   const [timerRunOut, setTimerRunOut] = useState<boolean>(false)
   const [reloadMemoizedCountdownTimer, setReloadMemoizedCountdownTimer] = useState<boolean>(false)
+  const [statefulChallengeIndexData, setStatefulChallengeIndexData] = useState<ChallengeIndexDocumentInterface>({...route.params.challengeIndexData})    
   // Define references
   const countdownTimerMinutesRef = useRef(GAME_CONSTANTS.CHALLENGE_TIMER_INITIAL_MINUTES)
   const countdownTimerSecondsRef = useRef(GAME_CONSTANTS.CHALLENGE_TIMER_INITIAL_SECONDS)
   const challengeDataRef = useRef<ChallengeDataDocumentInterface>(null)
   const stopCountDown = useRef<boolean>(false)
   // Define constants
-  const CHALLENGE_INDEX_UID:string = route.params.challengeIndexUid
-  const CHALLENGE_UID:string = route.params.challengeUid
-  const CHALLENGE_INDEX_DATA: ChallengeIndexDocumentInterface =  route.params.challengeIndexData
   const MAX_NUMBER_SECONDS:number = GAME_CONSTANTS.CHALLENGE_TIMER_INITIAL_MINUTES * 60 + GAME_CONSTANTS.CHALLENGE_TIMER_INITIAL_SECONDS
   
   const { sharedValue: userMetadataSharedValue } = useUserMetadataSharedValue()  
-  
 
   useEffect(() => {
-    fetchChallengeData(CHALLENGE_UID).then(async (document)=>{
+    fetchChallengeData(statefulChallengeIndexData.challengeDataUid).then(async (document)=>{
       challengeDataRef.current = document.data()
-      if(challengeDataRef.current!=undefined){
-        // before start, let the backend know the user started        
-        updateUserSkChallengesPlayed(userMetadataSharedValue.userDataDocument.uid,CHALLENGE_INDEX_UID,CHALLENGE_INDEX_DATA).then(()=>{
+      if(challengeDataRef.current!=undefined){        
+        // before start, let the backend know the user started
+        updateUserSkChallengesPlayed(userMetadataSharedValue.userDataDocument.uid,statefulChallengeIndexData.challengeIndexUid,statefulChallengeIndexData).then(()=>{
           setFetchingChallengeData(false)  
-        }).catch(()=>{
+        }).catch((error)=>{          
           Alert.alert('Error', 'There was an database error ', [{text: 'OK',onPress:()=> navigation.goBack()},])
         })
-        
       }else{
         Alert.alert('Error', 'There was an error retrieving the selected challenge', [{text: 'OK',onPress:()=> navigation.goBack()},])
       }
-      
     }).catch((error)=>{
       Alert.alert('Error', 'There was an error retrieving the selected challenge', [{text: 'OK',onPress:()=> navigation.goBack()},])
     })
@@ -77,8 +72,7 @@ export default function PlayScreen({navigation,route}) {
       (
       <>
         <CountdownTimerMemo countdownTimerMinutesRef={countdownTimerMinutesRef} countdownTimerSecondsRef={countdownTimerSecondsRef} setTimerRunOut={setTimerRunOut} stopCountDown={stopCountDown} reloadMemoizedCountdownTimer={reloadMemoizedCountdownTimer}/>
-        {console.log('right before JSX returns challengeDataRef.current',challengeDataRef.current)}
-        <GameBody navigation={navigation} challengeData={challengeDataRef.current} challengeIndexData={CHALLENGE_INDEX_DATA} maxNumberOfSeconds={MAX_NUMBER_SECONDS} countdownTimerMinutesRef={countdownTimerMinutesRef} countdownTimerSecondsRef={countdownTimerSecondsRef} timerRunOut={timerRunOut} stopCountDown={stopCountDown} setReloadMemoizedCountdownTimer={setReloadMemoizedCountdownTimer} reloadMemoizedCountdownTimer={reloadMemoizedCountdownTimer}/>
+        <GameBody navigation={navigation} challengeData={challengeDataRef.current} challengeIndexData={statefulChallengeIndexData} maxNumberOfSeconds={MAX_NUMBER_SECONDS} countdownTimerMinutesRef={countdownTimerMinutesRef} countdownTimerSecondsRef={countdownTimerSecondsRef} timerRunOut={timerRunOut} stopCountDown={stopCountDown} setReloadMemoizedCountdownTimer={setReloadMemoizedCountdownTimer} reloadMemoizedCountdownTimer={reloadMemoizedCountdownTimer}/>
       </>
       )}
     </ThemeAwareSafeAreaView>

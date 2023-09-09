@@ -13,7 +13,7 @@ const DEFAULT_IMAGE = Image.resolveAssetSource(Images.defaultProfileAvatar).uri
 
 export default function CustomDrawerContent(props){
 
-    const { sharedValue: userMetadataSharedValue } = useUserMetadataSharedValue()    
+    const { sharedValue: userMetadataSharedValue } = useUserMetadataSharedValue()
     let colorMode = useColorScheme();
 
     const [statefulDocumentData, setStatefulDocumentData] = useState<UserDocumentInterface>(userMetadataSharedValue.userDataDocument)

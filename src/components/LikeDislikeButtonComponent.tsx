@@ -1,10 +1,9 @@
-import { Alert, Pressable,StyleSheet,View } from "react-native"
-import { Icon,Text,useTheme } from "@rneui/themed"
-import { useEffect } from "react"
-import { updateLikeCountBy } from "./utils/firebaseUtils/updateLikeCountBy"
-import { isChallengeLikedOrDislikedByUser } from "./utils/firebaseUtils/isChallengeLikedOrDislikedByUser"
+import { Icon, Text } from "@rneui/themed"
+import { useEffect, useState } from "react"
+import { Alert, Pressable, StyleSheet, View } from "react-native"
 import { useUserMetadataSharedValue } from "../context/UserMetadataProvider"
-import { useState } from "react"
+import { isChallengeLikedOrDislikedByUser } from "./utils/firebaseUtils/isChallengeLikedOrDislikedByUser"
+import { updateLikeCountBy } from "./utils/firebaseUtils/updateLikeCountBy"
 export default function LikeDislikeComponent(props){
   const { sharedValue: userMetadataSharedValue } =useUserMetadataSharedValue()    
 

@@ -1,16 +1,15 @@
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import Homescreen from '../screens/HomeScreen'
-import { Icon,Text,useTheme } from "@rneui/themed"
-import { View, useColorScheme } from 'react-native'
+import { createNativeStackNavigator } from '@react-navigation/native-stack'
+import { Icon, useTheme } from "@rneui/themed"
+import { useColorScheme } from 'react-native'
 import CreateSKChallengeScreen from '../screens/CreateSKChallengeScreen'
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import Homescreen from '../screens/HomeScreen'
 
-import PlayScreen from '../screens/Playscreen'
 import LeaderBoardStatsScreen from '../screens/LeaderBoardStatsScreen'
+import PlayScreen from '../screens/Playscreen'
 import UserProfileScreen from '../screens/UserProfileScreen'
 
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator()
 const Tab = createBottomTabNavigator()
 
 const HomescreenNavigator = ()=>{

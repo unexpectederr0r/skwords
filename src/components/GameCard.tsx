@@ -1,4 +1,3 @@
-
 import {View} from 'react-native'
 import { Text, Skeleton, useTheme} from '@rneui/themed'
 import LikeDislikeComponent from './LikeDislikeButtonComponent'

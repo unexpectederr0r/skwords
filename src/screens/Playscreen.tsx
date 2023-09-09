@@ -8,6 +8,10 @@ import { fetchChallengeData } from "../components/utils/firebaseUtils/fetchChall
 import { ChallengeDataDocumentInterface, ChallengeIndexDocumentInterface } from "../components/utils/firebaseUtils/types/firebaseDocumentInterfaces"
 import { GAME_CONSTANTS } from "../constants/gameConstants"
 
+import { updateUserSkChallengesPlayed } from "../components/utils/firebaseUtils/updateUserSkChallengesPlayed"
+
+import { useUserMetadataSharedValue } from "../context/UserMetadataProvider"
+
 const ThemeAwareSafeAreaView = (props) => {
     const { theme, updateTheme } = useTheme()           
     //console.log('playscreen ThemeAwareSafeAreaView theme.colors.background',theme.colors.background)
@@ -31,16 +35,25 @@ export default function PlayScreen({navigation,route}) {
   const challengeDataRef = useRef<ChallengeDataDocumentInterface>(null)
   const stopCountDown = useRef<boolean>(false)
   // Define constants
+  const CHALLENGE_INDEX_UID:string = route.params.challengeIndexUid
   const CHALLENGE_UID:string = route.params.challengeUid
   const CHALLENGE_INDEX_DATA: ChallengeIndexDocumentInterface =  route.params.challengeIndexData
   const MAX_NUMBER_SECONDS:number = GAME_CONSTANTS.CHALLENGE_TIMER_INITIAL_MINUTES * 60 + GAME_CONSTANTS.CHALLENGE_TIMER_INITIAL_SECONDS
   
+  const { sharedValue: userMetadataSharedValue } = useUserMetadataSharedValue()  
+  
 
   useEffect(() => {
-    fetchChallengeData(CHALLENGE_UID).then((document)=>{
+    fetchChallengeData(CHALLENGE_UID).then(async (document)=>{
       challengeDataRef.current = document.data()
       if(challengeDataRef.current!=undefined){
-        setFetchingChallengeData(false)
+        // before start, let the backend know the user started        
+        updateUserSkChallengesPlayed(userMetadataSharedValue.userDataDocument.uid,CHALLENGE_INDEX_UID,CHALLENGE_INDEX_DATA).then(()=>{
+          setFetchingChallengeData(false)  
+        }).catch(()=>{
+          Alert.alert('Error', 'There was an database error ', [{text: 'OK',onPress:()=> navigation.goBack()},])
+        })
+        
       }else{
         Alert.alert('Error', 'There was an error retrieving the selected challenge', [{text: 'OK',onPress:()=> navigation.goBack()},])
       }

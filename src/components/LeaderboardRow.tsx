@@ -1,6 +1,5 @@
-import { View, StyleSheet, useColorScheme, ActivityIndicator } from "react-native"
-import { Tab, TabView, Text, useTheme,Icon, Divider, Image } from '@rneui/themed'
-import { fetchSkPointsLeaderBoard } from "../components/utils/firebaseUtils/fetchSkPointsLeaderBoard"
+import { Icon, Text, useTheme } from '@rneui/themed'
+import { StyleSheet, View } from "react-native"
 export default function LeaderboardRow (props){
     const { theme, updateTheme } = useTheme()
     const styles = StyleSheet.create({

@@ -1,15 +1,13 @@
 // uses global state? what if it updates
 // update global state?
-import { Alert, View, useColorScheme, StyleSheet, ActivityIndicator } from "react-native"
-import { Text, useTheme, Button, Input, AirbnbRating, Icon } from "@rneui/themed"
+import { Image } from '@rneui/base'
+import { Icon, Input, useTheme } from "@rneui/themed"
+import React, { useEffect, useRef, useState } from 'react'
+import { ActivityIndicator, Alert, StyleSheet, View, useColorScheme } from "react-native"
 import { firebase } from '../../firebaseConfig'
-import React, { useEffect, useRef, useState, forwardRef } from 'react'
-import { Dimensions } from 'react-native'
-import { FlatList, ScrollView } from 'react-native-gesture-handler'
+import Images from '../assets/images/exports'
 import { fetchUserDataDocument } from "../components/utils/firebaseUtils/fetchUserDataDocument"
 import { UserDocumentInterface } from "../components/utils/firebaseUtils/types/firebaseDocumentInterfaces"
-import { Image } from '@rneui/base'
-import Images from '../assets/images/exports'
 // Line taken from: https://stackoverflow.com/questions/29290460/use-image-with-a-local-file
 const DEFAULT_IMAGE = Image.resolveAssetSource(Images.defaultProfileAvatar).uri
 

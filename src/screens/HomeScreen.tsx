@@ -1,18 +1,11 @@
-import 'react-native-gesture-handler';
-
-import { View,ScrollView, RefreshControl} from 'react-native';
-
-import { useTheme} from '@rneui/themed';
-
-import {useState, useEffect, useCallback, useRef} from 'react';
-
+import 'react-native-gesture-handler'
+import { View,ScrollView, RefreshControl} from 'react-native'
+import { useTheme} from '@rneui/themed'
+import {useState, useEffect, useCallback, useRef} from 'react'
 import {GameCard} from '../components/index'
-
 import { fetchDocumentsFromCollection } from '../components/utils/firebaseUtils/fetchDocumentsFromCollection'
-
-import { FetchDocumentsFromCollectionOptionsInterface } from '../components/utils/firebaseUtils/types/fetchDocumentsFromCollectionOptionsInterface';
-
-import FIREBASE_COLLECTIONS from '../components/utils/firebaseUtils/constants/firebaseCollections';
+import { FetchDocumentsFromCollectionOptionsInterface } from '../components/utils/firebaseUtils/types/fetchDocumentsFromCollectionOptionsInterface'
+import FIREBASE_COLLECTIONS from '../components/utils/firebaseUtils/constants/firebaseCollections'
 
 export default function Homescreen(props){    
     

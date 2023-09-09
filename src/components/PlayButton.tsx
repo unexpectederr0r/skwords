@@ -1,12 +1,12 @@
-import { Pressable,StyleSheet,View } from "react-native"
-import { Icon,Text,useTheme } from "@rneui/themed"
+import { Icon, Text } from "@rneui/themed"
+import { Pressable, StyleSheet, View } from "react-native"
 import { ChallengeIndexDocumentInterface } from "./utils/firebaseUtils/types/firebaseDocumentInterfaces"
 interface PlayButtonComponentProps {
   challengeIndexUid: string
   challengeIndexData: ChallengeIndexDocumentInterface,
   props:any
 }
-export default function PlayButtonComponent({challengeIndexData,...props}:PlayButtonComponentProps){  
+export default function PlayButtonComponent({challengeIndexData,...props}:PlayButtonComponentProps){ 
     const styles = StyleSheet.create({
       buttonContainer: {
         flexDirection:'row',
@@ -28,7 +28,7 @@ export default function PlayButtonComponent({challengeIndexData,...props}:PlayBu
     })
     return(      
       <View style={props.style}>
-        <Pressable style={styles.buttonContainer} onPress={()=>{props.navigation.push('PlayScreen',{challengeUid: challengeIndexData.challengeUid, challengeIndexData: challengeIndexData})}}>
+        <Pressable style={styles.buttonContainer} onPress={()=>{props.navigation.push('PlayScreen',{challengeIndexUid: props.challengeIndexUid,challengeUid: challengeIndexData.challengeUid, challengeIndexData: challengeIndexData})}}>
           <Icon name= 'play' type= 'font-awesome' size= {props.fontSize?props.fontSize:15} color= 'white'/>
           <Text style={styles.text}>Play</Text>
         </Pressable>

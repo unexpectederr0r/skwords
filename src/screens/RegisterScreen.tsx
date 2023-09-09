@@ -1,4 +1,4 @@
-import { useEffect,useState,useMemo, SyntheticEvent, useRef, forwardRef}  from 'react';
+import { useEffect,useState,useMemo, SyntheticEvent, useRef, forwardRef}  from 'react'
 import React from 'react'
 import {
   SafeAreaView,
@@ -8,20 +8,22 @@ import {
   useColorScheme,  
   Image,
   Platform,
-} from 'react-native';
+} from 'react-native'
 
-import LoginSVGLightTheme from '../assets/images/misc/logo_light_theme.svg';
+import LoginSVGLightTheme from '../assets/images/misc/logo_light_theme.svg'
 import LoginSVGDarkTheme from '../assets/images/misc/logo_dark_theme.svg'
 
-import { Input, Text, Button, useTheme } from '@rneui/themed';
+import { Input, Text, Button, useTheme } from '@rneui/themed'
 
-import BackgroundImages from '../assets/images/animated_images_background/BackgroundImages';
-import BackgroundVideos from '../assets/videos/background_videos/BackgroundVideos';
+import BackgroundImages from '../assets/images/animated_images_background/BackgroundImages'
+import BackgroundVideos from '../assets/videos/background_videos/BackgroundVideos'
+
+import { UserDocumentInterface } from '../components/utils/firebaseUtils/types/firebaseDocumentInterfaces'
 
 import { Video,ResizeMode } from 'expo-av'
-import { BlurView } from 'expo-blur';
+import { BlurView } from 'expo-blur'
 
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePicker from '@react-native-community/datetimepicker'
 
 import {firebase} from '../../firebaseConfig'
 
@@ -148,6 +150,8 @@ export default function RegisterScreen ({navigation, route}) {
     }
     
   }
+
+  
   
   const handleRegister = (name:string,nickname:string,birthday:Date,email:string,password:string,repeatedPassword:string) => {    
 
@@ -173,7 +177,9 @@ export default function RegisterScreen ({navigation, route}) {
                     nickname: nickname,
                     birthday: birthday,
                     email:email,
-                    accCreationDate:new Date(new Date().toUTCString())
+                    accCreationDate:new Date(new Date().toUTCString()),
+                    skChallengesPlayed:[],
+                    skPointsHistory:[0]
                 }).then((any)=>{
                   //route.params.setUserIsLoggedIn(true)                  
                   firebase.firestore().collection('unique_nicknames_in_use').doc(String(nickname)).set({userUid:userCredentials.user.uid,}).then((any)=>{})                  

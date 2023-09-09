@@ -1,5 +1,5 @@
-import { Header as RNEHeader, Icon } from '@rneui/themed';
-import { DrawerActions,} from '@react-navigation/native';
+import { Header as RNEHeader, Icon } from '@rneui/themed'
+import { DrawerActions,} from '@react-navigation/native'
 import {View} from 'react-native'
 export default function Header(props){
     return(

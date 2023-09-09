@@ -1,4 +1,4 @@
-import { LogBox } from 'react-native';
+import { LogBox } from 'react-native'
 LogBox.ignoreLogs([
   'Function components cannot be given refs.',
 ])
@@ -34,6 +34,7 @@ import { updateUserPosts } from "../components/utils/firebaseUtils/updateUserPos
 import { updateNumberOfSkPointsBy } from "../components/utils/firebaseUtils/updateNumberOfSkPointsBy"
 import { GAME_CONSTANTS } from "../constants/gameConstants"
 import SkPointsEarnedComponent from "../components/SkPointsEarnedComponent"
+import { updateSkPointsHistory } from '../components/utils/firebaseUtils/updateSkPointsHistory'
 
 const { width } = Dimensions.get('window')
 const { height } = Dimensions.get('screen')
@@ -282,8 +283,11 @@ export default function CreateSKChallengeScreen({navigation, route, ...props}){
         if (sKChallengeIsValidResult===true) {
             // All fields are valid, start backend updates            
             if(handleSkChallengeUpload(challengeObjectDetails,userUid)){                
+                await updateSkPointsHistory(userUid,GAME_CONSTANTS.SKPOINTS_AWARD_CHALLENGE_CREATION).catch(()=>{
+                    showAlertMessage("There was an error updating your statistics in the database, the 'My Stats' tab may not reflect accurate information")
+                })
                 // All the challenge-related data has been created, award the user with skpoints
-                return updateNumberOfSkPointsBy(userUid,GAME_CONSTANTS.SKPOINTS_AWARD_CHALLENGE_CREATION).then(()=>{                    
+                return updateNumberOfSkPointsBy(userUid,GAME_CONSTANTS.SKPOINTS_AWARD_CHALLENGE_CREATION).then(()=>{
                     return true
                 }).catch(()=>{
                     showAlertMessage('An server error has ocurred and you were not awarded points for creating the SKChallenge')                        

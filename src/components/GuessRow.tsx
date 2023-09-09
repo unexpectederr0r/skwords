@@ -1,14 +1,14 @@
 import { Alert, View, useColorScheme } from "react-native"
 import { StyleProp,ViewStyle } from "react-native"
 import { Icon } from "@rneui/themed"
-import React, { useEffect, useRef, useState } from 'react';
-import { StyleSheet,TextInput } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react'
+import { StyleSheet,TextInput } from 'react-native'
 
-type FontWeight = 'normal' | 'bold' | number;
+type FontWeight = 'normal' | 'bold' | number
 interface GuessRowProps {
     fontSize: number
     fontWeight: FontWeight
-    style?: StyleProp<ViewStyle>;
+    style?: StyleProp<ViewStyle>
 }
 
 import { useWordLengthSharedValue } from "../context/WordLengthSharedValueProvider"

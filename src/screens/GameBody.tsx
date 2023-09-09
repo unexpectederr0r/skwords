@@ -1,5 +1,5 @@
 import React, {useEffect, useState, MutableRefObject} from "react"
-import { StyleSheet, View, SafeAreaView, Text, TouchableOpacity, useColorScheme, Pressable, Alert, Keyboard, TouchableWithoutFeedback, BackHandler} from "react-native"
+import { StyleSheet, View, SafeAreaView, Text, TouchableOpacity, useColorScheme, Alert, Keyboard, TouchableWithoutFeedback, BackHandler} from "react-native"
 import { Text as RNEText, Icon, useTheme, Dialog, Input, Button as RNEButton} from "@rneui/themed"
 import LigthningSVG from '../assets/images/misc/lightning.svg'
 import { ChallengeDataDocumentInterface, ChallengeIndexDocumentInterface } from "../components/utils/firebaseUtils/types/firebaseDocumentInterfaces"
@@ -7,6 +7,8 @@ import { GAME_CONSTANTS } from "../constants/gameConstants"
 import { updateNumberOfSkPointsBy } from "../components/utils/firebaseUtils/updateNumberOfSkPointsBy"
 
 import { useUserMetadataSharedValue } from "../context/UserMetadataProvider"
+import { updateStatsOfPlayedChallenge } from "../components/utils/firebaseUtils/updateStatsOfPlayedChallenge"
+import { updateSkPointsHistory } from "../components/utils/firebaseUtils/updateSkPointsHistory"
 const CharacterComponent = ({ index, playerCharacter, wordToDiscover, guessAlreadyUsed}) => {
   
   //let letter = useCharacterGuessInput[index]
@@ -188,6 +190,10 @@ export default function GameBody({challengeData, challengeIndexData, navigation,
     }
   },[timerRunOut])
 
+  function getSecondsLeft():number{
+    return countdownTimerMinutesRef.current * 60 + countdownTimerSecondsRef.current
+  }
+
   function calculatePlayerScoreAsPercentage():number{    
     
     let totalHintsUsed:number = 0
@@ -198,7 +204,8 @@ export default function GameBody({challengeData, challengeIndexData, navigation,
     console.log('characterHintUsedMapArray',characterHintUsedMapArray)
     console.log('characterHintUsedMapArray.length',characterHintUsedMapArray.length)
 
-   const secondsLeft:number = countdownTimerMinutesRef.current * 60 + countdownTimerSecondsRef.current
+   //const secondsLeft:number = countdownTimerMinutesRef.current * 60 + countdownTimerSecondsRef.current
+   const secondsLeft:number = getSecondsLeft()
    /* console.log('countdownTimerMinutesRef.current',countdownTimerMinutesRef.current)
    console.log('countdownTimerSecondsRef.current',countdownTimerSecondsRef.current)
    console.log('secondsLeft',secondsLeft)
@@ -213,9 +220,9 @@ export default function GameBody({challengeData, challengeIndexData, navigation,
    let averageHintsAndTimeFactorsRatio = (timeFactorRatio+hintsUsedFactorRatio)/2
    // the score can never be zero
    averageHintsAndTimeFactorsRatio = averageHintsAndTimeFactorsRatio==0?0.01:averageHintsAndTimeFactorsRatio
-   console.log('timeFactor',timeFactorRatio)
+   /* console.log('timeFactor',timeFactorRatio)
    console.log('hintsUsedFactorRatio',hintsUsedFactorRatio)
-   console.log('averageHintsAndTimeFactorsRatio',averageHintsAndTimeFactorsRatio)
+   console.log('averageHintsAndTimeFactorsRatio',averageHintsAndTimeFactorsRatio) */
    
    
     // difficuly in the database ranges from 0 to 6, being 0 the easiest difficulty and 6 the hardest, 1 will be added to calculate the ratio and avoid dealing with 0
@@ -235,12 +242,24 @@ export default function GameBody({challengeData, challengeIndexData, navigation,
     return (Math.floor((challengeIndexData.difficulty+1) * GAME_CONSTANTS.CHALLENGE_FAILED__MIN_PENALIZED_POINTS * (playerPerformanceAsPercentage/100)))
   }
 
-  function handlePlayerSuccessfullySolvedTheChallenge():void{
+  async function handlePlayerSuccessfullySolvedTheChallenge():void{
     stopCountDown.current = true
     setReloadMemoizedCountdownTimer(true)
     const playerScoreAsPercentage:number = calculatePlayerScoreAsPercentage()    
     const awardedSkPoints:number = calculateAwardedSkPoints(playerScoreAsPercentage)
-    updateNumberOfSkPointsBy(USER_UID,awardedSkPoints).catch(()=>{
+    
+    await updateSkPointsHistory(USER_UID,awardedSkPoints).catch(()=>{
+      Alert.alert('Warning', "There was an error updating your statistics in the database, the 'My Stats' tab may not reflect accurate information", [{text: 'OK',}])    
+    })
+    updateNumberOfSkPointsBy(USER_UID,awardedSkPoints).then(async ()=>{
+        const timeTakenInSeconds = maxNumberOfSeconds - getSecondsLeft()
+      updateStatsOfPlayedChallenge(USER_UID,playerScoreAsPercentage,timeTakenInSeconds,awardedSkPoints).then(()=>{
+          
+          console.log("successful update of stats")
+      }).catch(()=>{
+          Alert.alert('Warning', "There was an error updating your statistics in the database, the 'My Stats' tab may not reflect accurate information", [{text: 'OK',}])    
+      })
+    }).catch(()=>{
 
     })
     setFinalPlayerScoreAsPercentage(playerScoreAsPercentage)    
@@ -248,16 +267,29 @@ export default function GameBody({challengeData, challengeIndexData, navigation,
     setShowGameFinishedComponent(true)
   }
 
-  function handlePlayerLost():void{
+  async function handlePlayerLost():void{
     setShowSolveHintComponent(false)
     stopCountDown.current = true
     setReloadMemoizedCountdownTimer(true)
     const playerScoreAsPercentage:number = calculatePlayerScoreAsPercentage()    
     const penalizedSkPoints:number = calculatePenalizedSkPoints(playerScoreAsPercentage)
     console.log('penalizedSkPoints',penalizedSkPoints)
-    // Notice the negative number
-    updateNumberOfSkPointsBy(USER_UID,((-1) * penalizedSkPoints)).catch(()=>{
-      
+    // Notice the negative number (-1) mutipliying the number of penalized skPoints
+    await updateSkPointsHistory(USER_UID,((-1)*penalizedSkPoints)).catch(()=>{
+      Alert.alert('Warning', "There was an error updating your statistics in the database, the 'My Stats' tab may not reflect accurate information", [{text: 'OK',}])    
+    })
+    // Notice the negative number (-1) mutipliying the number of penalized skPoints
+    updateNumberOfSkPointsBy(USER_UID,((-1) * penalizedSkPoints)).then(async ()=>{
+        const timeTakenInSeconds = maxNumberOfSeconds - getSecondsLeft()
+        const scoreToStoreInDb = 0
+      updateStatsOfPlayedChallenge(USER_UID,scoreToStoreInDb,timeTakenInSeconds,((-1)*penalizedSkPoints)).then(()=>{
+          console.log("successful update of stats")
+      }).catch(()=>{
+          Alert.alert('Warning', "There was an error updating your statistics in the database, the 'My Stats' tab may not reflect accurate information", [{text: 'OK',}])    
+      })
+    })
+    .catch(()=>{
+      Alert.alert('Warning', "There was an error updating your SkPoints in the database", [{text: 'OK',}])    
     })
     setPlayerLost(true)
     setFinalPlayerScoreAsPercentage(playerScoreAsPercentage)    

@@ -1,13 +1,14 @@
 import { useColorScheme, View, Text, StyleSheet} from 'react-native'
 import { DrawerContentScrollView, DrawerItemList} from '@react-navigation/drawer'
 import { Button, Divider} from '@rneui/themed'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Image } from '@rneui/base'
 import {firebase} from '../../firebaseConfig'
 import { useUserMetadataSharedValue } from '../context/UserMetadataProvider'
 import { UserDocumentInterface } from './utils/firebaseUtils/types/firebaseDocumentInterfaces'
 import BoldText from './utils/BoldText'
 import Images from '../../src/assets/images/exports'
+import FIREBASE_COLLECTIONS from './utils/firebaseUtils/constants/firebaseCollections'
 // Line taken from: https://stackoverflow.com/questions/29290460/use-image-with-a-local-file
 const DEFAULT_IMAGE = Image.resolveAssetSource(Images.defaultProfileAvatar).uri
 
@@ -17,6 +18,23 @@ export default function CustomDrawerContent(props){
     let colorMode = useColorScheme();
 
     const [statefulDocumentData, setStatefulDocumentData] = useState<UserDocumentInterface>(userMetadataSharedValue.userDataDocument)
+
+    function successfulUserDocumentSnapshot(userDocumentSnapshot){
+        if(userDocumentSnapshot.exists){
+            console.log("userDocumentSnapshot.exists",userDocumentSnapshot.exists)
+            setStatefulDocumentData(userDocumentSnapshot.data())
+        }
+    }
+
+    // This useEffect will trigger on the first time and register a firebase onSnapshot event listener that will execute "successfulUserDocumentSnapshot" whenever there's a change to the document. This is necessary to keep the number of the skPoints shown in the sidebar or drawer updated at all times
+    useEffect(()=>{
+        const user = firebase.auth().currentUser
+        // sanity check that the user is logged in
+        if (user !== null) {
+            // register the event listener to keep the skPoints shown updated 
+            firebase.firestore().collection(FIREBASE_COLLECTIONS.USERS_COLLECTION).doc(user.uid).onSnapshot(successfulUserDocumentSnapshot)
+        }
+    },[])
 
     const styles = StyleSheet.create({
         drawerContainerView: {

@@ -21,7 +21,7 @@ export default function CustomDrawerContent(props){
 
     function successfulUserDocumentSnapshot(userDocumentSnapshot){
         if(userDocumentSnapshot.exists){
-            console.log("userDocumentSnapshot.exists",userDocumentSnapshot.exists)
+            //console.log("userDocumentSnapshot.exists",userDocumentSnapshot.exists)
             setStatefulDocumentData(userDocumentSnapshot.data())
         }
     }

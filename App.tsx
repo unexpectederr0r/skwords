@@ -83,7 +83,8 @@ export default function App() {
           await fetchUserDataDocument(userIndexDocument.uid).then((userDataDocument)=>{
               //console.log('userIndexDocument', userIndexDocument)              
               userDataDocumentRef.current = userDataDocument.data()
-              //console.log('userDataDocument', userDataDocumentRef.current)
+              //console.log('App.tsx useEffect onAuthStateChanged, userDataDocumentRef', userDataDocumentRef.current)
+              //console.log('App.tsx useEffect onAuthStateChanged, userIndexDocument', userIndexDocument)
               setUserIndexDocument(userIndexDocument)
               setUserIsLoggedIn(true)
             }).catch(()=>{
@@ -161,13 +162,13 @@ export default function App() {
           <NavigationContainer >
             <CustomStatusBar/>
             <SystemThemeColorDetector>
-              {userIsLoggedIn===undefined?
+              {userIsLoggedIn===undefined || (userIsLoggedIn===true && userIndexDocument==null)?
                 (
                 <View style={{flex:1,position: "absolute",width:"100%",height:"100%",backgroundColor:'rgba(255, 255, 255, 0.5)',alignItems: 'center',justifyContent: 'center'}}>
                   <ActivityIndicator size="large" />
                 </View>
                 ):
-                userIsLoggedIn===false?
+                userIsLoggedIn===false || userIndexDocument==null?
                 (                
                   
                   <Stack.Navigator screenOptions={{headerShown: false}}>

@@ -7,8 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {initializeAuth} from 'firebase/auth';
 import {getReactNativePersistence} from 'firebase/auth/react-native';
 
-//console.log('firebaseConfig, process.env',process.env.FIREBASE_API_KEY)
-
+// Need to define process.env as variable: Reference https://github.com/goatandsheep/react-native-dotenv/issues/251#issuecomment-1176894101
 const environment = process.env
 console.log('firebaseConfig, process.env',environment)
 const firebaseConfig = {

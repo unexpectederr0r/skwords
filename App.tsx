@@ -103,6 +103,7 @@ export default function App() {
   // Needed to be able to wrap and use the useThemeMode and useColorScheme hooks. (Only can be called in a functional component)  
   const SystemThemeColorDetector = (props)=>{
     colorMode = useColorScheme()
+    console.log('app.tsx useeffect colorMode',colorMode)
     const { theme, updateTheme } = useTheme()
     const { setMode } = useThemeMode()
       
@@ -125,16 +126,9 @@ export default function App() {
           secondary:'rgba(255, 71, 249, 1)',
           cardBackground:'white'
         }
-      });
-      //console.log('app.tsx useeffect theme', prettyFormat(theme))
-      if(colorMode==='dark'){
-        console.log('app.tsx detected dark')
-      }else{
-        console.log('app.tsx detected light')
-      }
-      // thesis: this is the magic line
-      setMode(colorMode);
-    }, [colorMode]);
+      })
+      setMode(colorMode==='dark'?'dark':'light')
+    }, [colorMode])
 
     //if minHeight is not set it doesnt show up
     return(

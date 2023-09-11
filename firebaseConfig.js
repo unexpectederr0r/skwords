@@ -7,15 +7,18 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {initializeAuth} from 'firebase/auth';
 import {getReactNativePersistence} from 'firebase/auth/react-native';
 
-console.log('firebaseConfig, process.env',process.env.FIREBASE_API_KEY)
+//console.log('firebaseConfig, process.env',process.env.FIREBASE_API_KEY)
+
+const environment = process.env
+console.log('firebaseConfig, process.env',environment)
 const firebaseConfig = {
-    apiKey: process.env.FIREBASE_API_KEY,
-    authDomain: process.env.FIREBASE_AUTH_DOMAIN,  
-    projectId: process.env.FIREBASE_PROJECT_ID,  
-    storageBucket: process.env.FIREBASE_STORAGE_BUCKET,  
-    messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
-    appId: process.env.FIREBASE_APP_ID,  
-    measurementId: process.env.FIREBASE_MEASUREMENT_ID 
+    apiKey: environment.EXPO_PUBLIC_FIREBASE_API_KEY,
+    authDomain: environment.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN,  
+    projectId: environment.EXPO_PUBLIC_FIREBASE_PROJECT_ID,  
+    storageBucket: environment.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET,  
+    messagingSenderId: environment.EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+    appId: environment.EXPO_PUBLIC_FIREBASE_APP_ID,  
+    measurementId: environment.EXPO_PUBLIC_FIREBASE_MEASUREMENT_ID 
 };  
 
 

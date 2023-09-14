@@ -138,17 +138,14 @@ export default function App() {
     )
   }
 
-  const onLayoutRootView = useCallback(async () => {
+  const onLayoutRootView = async () => {
     if (fontsLoaded) {
       await SplashScreen.hideAsync();
+    }else if(!fontsLoaded) {
+      return null;
     }
-  }, [fontsLoaded]);
-
-  if (!fontsLoaded) {
-    return null;
   }
   
-
   return (
     <SafeAreaProvider>
       <SafeAreaView onLayout={onLayoutRootView}>      

@@ -2,11 +2,11 @@ import { firebase } from '../../../../firebaseConfig'
 import FIREBASE_COLLECTIONS from './constants/firebaseCollections'
 
 const isChallengeLikedOrDislikedByUser = (userUid: string, challengeIndexUid: string): Promise<boolean>=> {
-    const firebaseUser = firebase.auth().currentUser
+    /* const firebaseUser = firebase.auth().currentUser
     // If the user is not authenticated, reject the action
     if (!firebaseUser) {
         return Promise.reject('User is not authenticated.')
-    }
+    } */
     // Get the reference of both main documents
     const userDocumentRef = firebase.firestore().collection(FIREBASE_COLLECTIONS.USERS_COLLECTION).doc(userUid)
     const challengeIndexDocumentRef = firebase.firestore().collection(FIREBASE_COLLECTIONS.CHALLENGES_INDEX_COLLECTION).doc(challengeIndexUid)

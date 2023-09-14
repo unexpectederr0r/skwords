@@ -1,5 +1,6 @@
 import axios from 'axios'
-const PERSPECTIVE_API_KEY = process.env.EXPO_PUBLIC_PERSPECTIVE_API_KEY
+import API_KEYS from '../../../SECRET_API_KEYS'
+const PERSPECTIVE_API_KEY = API_KEYS.PERSPECTIVE_API_KEY
 const PERSPECTIVE_API_ENDPOINT = 'https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key=' + PERSPECTIVE_API_KEY
 
 export function analyzeComment(comment) {

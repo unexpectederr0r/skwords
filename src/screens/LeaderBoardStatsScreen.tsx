@@ -13,6 +13,7 @@ import { fetchSkPointsHistory } from '../components/utils/firebaseUtils/fetchSkP
 import { fetchSkPointsLeaderBoard } from "../components/utils/firebaseUtils/fetchSkPointsLeaderBoard"
 import { fetchUserStatistics } from '../components/utils/firebaseUtils/fetchUserStatistics'
 import { useUserMetadataSharedValue } from '../context/UserMetadataProvider'
+import {useWindowDimensions} from 'react-native';
 // Line taken from: https://stackoverflow.com/questions/29290460/use-image-with-a-local-file
 const DEFAULT_IMAGE = Image.resolveAssetSource(Images.threeCups).uri
 
@@ -23,8 +24,11 @@ export default function LeaderBoardStatsScreen(props){
     const [index, setIndex] = useState(0)
     const { theme, updateTheme } = useTheme()
     const colorMode = useColorScheme()    
-
     
+    //There is an open known bug for the RNE component "Tab" that at times may crash the app, the following code is a work-around to fix it and was taken from the following Github comment: https://github.com/react-native-elements/react-native-elements/issues/3784#issuecomment-1685282505
+    const [indicatorX, setIndicatorX] = useState(0)
+    const {height, width: windowWidth} = useWindowDimensions()
+    const tabWidth = windowWidth / 2
 
     function LeaderBoardComponent (props){
         const [isLoading, setIsLoading] = useState(true)
@@ -279,7 +283,15 @@ export default function LeaderBoardStatsScreen(props){
 
     return (        
         <>
-            <Tab value={index} onChange={(e) => setIndex(e)} indicatorStyle={{ backgroundColor: theme.colors.secondary,height: 3,}} variant="primary" >
+            
+            <Tab //There is an open known bug for this component (Tab) that at times may crash the app, the following code in indicatorStyle is a work-around to fix it and was taken from the following Github comment: https://github.com/react-native-elements/react-native-elements/issues/3784#issuecomment-1685282505
+                value={index} onChange={(e) => {
+                    setIndex(e);
+                    setIndicatorX(e * tabWidth) // Setting the right translateX value, (current work-around for bug https://github.com/react-native-elements/react-native-elements/issues/3784)
+                }} 
+                indicatorStyle={{ backgroundColor: theme.colors.secondary,height: 3, transform: [{ translateX: indicatorX }]}}
+                variant="primary" >
+                
                 <Tab.Item
                     title="Leaderboard"
                     titleStyle={{ fontSize: 12 }}

@@ -2,11 +2,11 @@ import {firebase} from '../../../../firebaseConfig'
 import FIREBASE_COLLECTIONS from './constants/firebaseCollections'
 
 const fetchSkPointsHistory = async (userUid: string):Promise<any> =>{
-    const firebaseUser = firebase.auth().currentUser
+    /* const firebaseUser = firebase.auth().currentUser
     // If the user is not auth, reject action
     if (!firebaseUser) {
         return Promise.reject('User is not authenticated.')
-    }else{
+    }else{ */
         const userDocumentRef = firebase.firestore().collection(FIREBASE_COLLECTIONS.USERS_COLLECTION).doc(userUid)
         let userDocumentSnapshot = null
         try {
@@ -23,6 +23,6 @@ const fetchSkPointsHistory = async (userUid: string):Promise<any> =>{
         }else{
             return Promise.reject('Error fetching user document')
         }
-    }
+    /* } */
 }
 export {fetchSkPointsHistory}

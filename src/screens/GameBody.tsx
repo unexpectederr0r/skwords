@@ -492,10 +492,11 @@ export default function GameBody({challengeData, challengeIndexData, navigation,
     setShowConfirmationDialogAboutHintsUsage(true)    
   }
 
-  const handleSolvedHintSuccessfully = ()=>{
+  const handleSolvedHintSuccessfully = ()=>{    
     // retrive character index and fill boxes with character
     for (let index = 0; index < Object.keys(playerGuessesEntriesObject).length; index++) {
-      playerGuessesEntriesObject[index][hintIndex]=wordToDiscover[hintIndex]
+      // match virtual keyboard uppercase style
+      playerGuessesEntriesObject[index][hintIndex]=wordToDiscover[hintIndex].toUpperCase()
     }    
     // close hint window        
     setShowSolveHintComponent(false)

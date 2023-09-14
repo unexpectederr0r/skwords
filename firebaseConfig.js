@@ -3,23 +3,20 @@ import 'firebase/compat/auth'
 import 'firebase/compat/firestore'
 import 'firebase/compat/storage'
 
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {initializeAuth} from 'firebase/auth';
-import {getReactNativePersistence} from 'firebase/auth/react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import {initializeAuth} from 'firebase/auth'
+import {getReactNativePersistence} from 'firebase/auth/react-native'
+import API_KEYS from './SECRET_API_KEYS'
 
-// Need to define process.env as variable: Reference https://github.com/goatandsheep/react-native-dotenv/issues/251#issuecomment-1176894101
-const environment = process.env
-console.log('firebaseConfig, process.env',environment)
 const firebaseConfig = {
-    apiKey: environment.EXPO_PUBLIC_FIREBASE_API_KEY,
-    authDomain: environment.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN,  
-    projectId: environment.EXPO_PUBLIC_FIREBASE_PROJECT_ID,  
-    storageBucket: environment.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET,  
-    messagingSenderId: environment.EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-    appId: environment.EXPO_PUBLIC_FIREBASE_APP_ID,  
-    measurementId: environment.EXPO_PUBLIC_FIREBASE_MEASUREMENT_ID 
-};  
-
+    apiKey: API_KEYS.FIREBASE_API_KEYS.API_KEY,
+    authDomain: API_KEYS.FIREBASE_API_KEYS.AUTH_DOMAIN,  
+    projectId: API_KEYS.FIREBASE_API_KEYS.PROJECT_ID,  
+    storageBucket: API_KEYS.FIREBASE_API_KEYS.STORAGE_BUCKET,  
+    messagingSenderId: API_KEYS.FIREBASE_API_KEYS.MESSAGING_SENDER_ID,
+    appId: API_KEYS.FIREBASE_API_KEYS.APP_ID,  
+    measurementId: API_KEYS.FIREBASE_API_KEYS.MEASUREMENT_ID
+}
 
 if (!firebase.apps.length) {
     const firebaseInstance = firebase.initializeApp(firebaseConfig);
@@ -28,4 +25,4 @@ if (!firebase.apps.length) {
         persistence: getReactNativePersistence(AsyncStorage),
     });
 }
-export { firebase };
+export { firebase , firebaseConfig }

@@ -47,8 +47,8 @@ interface UserDocumentInterface {
     birthday: Date,
     email: string,
     accCreationDate: Date,
-    skChallengesPlayed: Array<Object>,
-    skPointsHistory: Array<Object>,
+    skChallengesPlayed?: Array<Object>,
+    skPointsHistory?: Array<Object>,
 }
 
 // This data is admin by Firebase (Google associated account) internally and is associated to the user's email

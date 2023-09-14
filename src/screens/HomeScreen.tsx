@@ -30,7 +30,7 @@ export default function Homescreen(props){
     }
 
     useEffect(() => {
-        fetchChallenges({orderBy:'likeCount',limit:5,descending:true}).catch(()=>{
+        fetchChallenges({orderBy:'likeCount',limit:10,descending:true}).catch(()=>{
             Alert.alert('Error','An error occurred while fetching the challenges from the database',[{text:'OK',style:'default'}])
         })
     },[])
@@ -47,7 +47,7 @@ export default function Homescreen(props){
 
     async function onRefresh(){
         setHomescreenFilterCategorySharedValue({})
-        fetchChallenges({orderBy:'creationDate',limit:5,descending:true}).catch(()=>{
+        fetchChallenges({orderBy:'creationDate',limit:10,descending:true}).catch(()=>{
             Alert.alert('Error','An error occurred while fetching the challenges from the database',[{text:'OK',style:'default'}])
         })
     }

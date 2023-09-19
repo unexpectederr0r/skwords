@@ -18,8 +18,7 @@ const updateStatsOfPlayedChallenge = async (userUid: string, score:number,timeTa
             throw 'error fetching skChallengesPlayedArray'
         }
         // 2. get the latest entry from the array that consists of an object that corresponds to the last (and current) challenge launched by the user, and update the following fields: completed, score, timeTakenInSeconds and skPointsEarned,
-        const latestChallenge = skChallengesPlayedArray[skChallengesPlayedArray.length - 1]
-        console.log("latestChallenge")
+        const latestChallenge = skChallengesPlayedArray[skChallengesPlayedArray.length - 1]        
         if (latestChallenge) {
             latestChallenge.completed = true
             latestChallenge.score = score

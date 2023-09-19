@@ -9,6 +9,7 @@ import LeaderBoardStatsScreen from '../screens/LeaderBoardStatsScreen'
 import PlayScreen from '../screens/Playscreen'
 import UserProfileScreen from '../screens/UserProfileScreen'
 import { HomescreenFilterCategorySharedValueProvider } from '../context/HomescreenFilterCategorySharedValueProvider'
+import { HomescreenFilterDifficultySharedValueProvider } from '../context/HomescreenFilterDifficultySharedValueProvider'
 
 const Stack = createNativeStackNavigator()
 const Tab = createBottomTabNavigator()
@@ -16,10 +17,12 @@ const Tab = createBottomTabNavigator()
 const HomescreenNavigator = ()=>{
   return(
     <HomescreenFilterCategorySharedValueProvider initialStateValue={{}}>
-      <Stack.Navigator screenOptions={{headerShown: false,gestureEnabled: false}}>
-        <Stack.Screen name="Homescreen" component={Homescreen} /* initialParams={{ theme:theme}} *//>
-        <Stack.Screen name="PlayScreen" component={PlayScreen}/>
-      </Stack.Navigator>
+      <HomescreenFilterDifficultySharedValueProvider initialStateValue={null}>
+        <Stack.Navigator screenOptions={{headerShown: false,gestureEnabled: false}}>
+          <Stack.Screen name="Homescreen" component={Homescreen} /* initialParams={{ theme:theme}} *//>
+          <Stack.Screen name="PlayScreen" component={PlayScreen}/>
+        </Stack.Navigator>
+      </HomescreenFilterDifficultySharedValueProvider>
     </HomescreenFilterCategorySharedValueProvider>
   )
 }

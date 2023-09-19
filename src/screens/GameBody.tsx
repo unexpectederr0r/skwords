@@ -16,6 +16,7 @@ import { updateSkPointsHistory } from "../components/utils/firebaseUtils/updateS
 let colorMode = null
 
 interface GameBodyProps {
+  isFeaturedRef: React.RefObject<boolean>,
   challengeData: ChallengeDataDocumentInterface,
   challengeIndexData: ChallengeIndexDocumentInterface,
   navigation: any,
@@ -29,7 +30,7 @@ interface GameBodyProps {
   reloadMemoizedCountdownTimer: boolean
 }
 
-export default function GameBody({challengeData, challengeIndexData, navigation, maxNumberOfSeconds,countdownTimerMinutesRef,countdownTimerSecondsRef,timerRunOut,stopCountDown,setReloadMemoizedCountdownTimer,reloadMemoizedCountdownTimer,...props}:GameBodyProps) {
+export default function GameBody({isFeaturedRef, challengeData, challengeIndexData, navigation, maxNumberOfSeconds,countdownTimerMinutesRef,countdownTimerSecondsRef,timerRunOut,stopCountDown,setReloadMemoizedCountdownTimer,reloadMemoizedCountdownTimer,...props}:GameBodyProps) {
   
   
   colorMode = useColorScheme()
@@ -343,7 +344,9 @@ export default function GameBody({challengeData, challengeIndexData, navigation,
   }
 
   function calculateAwardedSkPoints(playerPerformanceAsPercentage):number{       
-    const awardedPoints = Math.floor((challengeIndexData.difficulty+1) * GAME_CONSTANTS.CHALLENGE_SUCESSFULLY_SOLVED_MIN_AWARDED_POINTS * (playerPerformanceAsPercentage/100))
+    const challengeIsFeaturedMultiplier = (isFeaturedRef.current===true?GAME_CONSTANTS.SKPOINTS_MULTIPLIER_WHEN_CHALLENGE_IS_FEATURED:1)
+    console.log("challengeIsFeaturedMultiplier",challengeIsFeaturedMultiplier)
+    const awardedPoints = Math.floor((challengeIndexData.difficulty+1) * GAME_CONSTANTS.CHALLENGE_SUCESSFULLY_SOLVED_MIN_AWARDED_POINTS * (playerPerformanceAsPercentage/100)) * challengeIsFeaturedMultiplier
     return (awardedPoints)>0?awardedPoints:1
   }
 

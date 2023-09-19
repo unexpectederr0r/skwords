@@ -1,5 +1,6 @@
 import { ChallengeIndexDocumentInterface } from "./firebaseDocumentInterfaces"
 import { WhereFilterOp } from '@firebase/firestore-types'
+import { DocumentSnapshot } from '@firebase/firestore-types'
 
 
 interface WhereQueryParametersInterface {
@@ -13,5 +14,7 @@ interface FetchDocumentsFromCollectionOptionsInterface {
     orderBy?: any
     descending?: boolean
     where?: WhereQueryParametersInterface
+    whereTwo?: WhereQueryParametersInterface
+    startAfter?:DocumentSnapshot
 }
 export {FetchDocumentsFromCollectionOptionsInterface}

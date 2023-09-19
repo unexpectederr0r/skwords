@@ -63,4 +63,11 @@ interface UserIndexInterface {
     uid: string
 }
 
-export {ChallengeDataDocumentInterface,ChallengeIndexDocumentInterface, UserDocumentInterface, UserIndexInterface}
+interface challengesIndexObjectInterface extends ChallengeIndexDocumentInterface{
+    challengeIndexUid: string,
+}
+
+interface challengeOfTheDayInterface extends challengesIndexObjectInterface{
+}
+
+export {ChallengeDataDocumentInterface,ChallengeIndexDocumentInterface, UserDocumentInterface, UserIndexInterface,challengesIndexObjectInterface,challengeOfTheDayInterface}

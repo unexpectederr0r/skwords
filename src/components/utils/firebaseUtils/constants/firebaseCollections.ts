@@ -1,4 +1,5 @@
 interface FirebaseCollections {
+    CHALLENGES_FEATURED_DAILY_CHALLENGE_COLLECTION:string,
     CHALLENGES_CATEGORIES_COLLECTION: string
     CHALLENGES_DATA_COLLECTION: string
     CHALLENGES_INDEX_COLLECTION: string
@@ -6,6 +7,7 @@ interface FirebaseCollections {
     USERS_COLLECTION: string
 }
 const FIREBASE_COLLECTIONS: FirebaseCollections = {
+    CHALLENGES_FEATURED_DAILY_CHALLENGE_COLLECTION: 'challengeOfTheDay',
     CHALLENGES_CATEGORIES_COLLECTION: 'challengesCategories',
     CHALLENGES_DATA_COLLECTION: 'challengesData',
     CHALLENGES_INDEX_COLLECTION: 'challengesIndex',

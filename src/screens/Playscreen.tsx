@@ -34,6 +34,7 @@ export default function PlayScreen({navigation,route}) {
   const countdownTimerMinutesRef = useRef(GAME_CONSTANTS.CHALLENGE_TIMER_INITIAL_MINUTES)
   const countdownTimerSecondsRef = useRef(GAME_CONSTANTS.CHALLENGE_TIMER_INITIAL_SECONDS)
   const challengeDataRef = useRef<ChallengeDataDocumentInterface>(null)
+  const isFeaturedRef = useRef<boolean>(route.params.isFeatured)
   const stopCountDown = useRef<boolean>(false)
   // Define constants
   const MAX_NUMBER_SECONDS:number = GAME_CONSTANTS.CHALLENGE_TIMER_INITIAL_MINUTES * 60 + GAME_CONSTANTS.CHALLENGE_TIMER_INITIAL_SECONDS
@@ -72,7 +73,7 @@ export default function PlayScreen({navigation,route}) {
       (
       <>
         <CountdownTimerMemo countdownTimerMinutesRef={countdownTimerMinutesRef} countdownTimerSecondsRef={countdownTimerSecondsRef} setTimerRunOut={setTimerRunOut} stopCountDown={stopCountDown} reloadMemoizedCountdownTimer={reloadMemoizedCountdownTimer}/>
-        <GameBody navigation={navigation} challengeData={challengeDataRef.current} challengeIndexData={statefulChallengeIndexData} maxNumberOfSeconds={MAX_NUMBER_SECONDS} countdownTimerMinutesRef={countdownTimerMinutesRef} countdownTimerSecondsRef={countdownTimerSecondsRef} timerRunOut={timerRunOut} stopCountDown={stopCountDown} setReloadMemoizedCountdownTimer={setReloadMemoizedCountdownTimer} reloadMemoizedCountdownTimer={reloadMemoizedCountdownTimer}/>
+        <GameBody isFeaturedRef={isFeaturedRef} navigation={navigation} challengeData={challengeDataRef.current} challengeIndexData={statefulChallengeIndexData} maxNumberOfSeconds={MAX_NUMBER_SECONDS} countdownTimerMinutesRef={countdownTimerMinutesRef} countdownTimerSecondsRef={countdownTimerSecondsRef} timerRunOut={timerRunOut} stopCountDown={stopCountDown} setReloadMemoizedCountdownTimer={setReloadMemoizedCountdownTimer} reloadMemoizedCountdownTimer={reloadMemoizedCountdownTimer}/>
       </>
       )}
     </ThemeAwareSafeAreaView>

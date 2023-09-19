@@ -191,8 +191,7 @@ export default function App() {
                     <Drawer.Screen
                       name="Home"
                       component={MainNavigator}
-                      initialParams={{ theme:theme, mai_key_one: 'arre lok' }}
-                      //options={{ drawerLabel: 'Home',title: 'testing the title key' }}                  
+                      initialParams={{ theme:theme}}
                     />                
                   </Drawer.Navigator>
                 </UserMetadataProvider>

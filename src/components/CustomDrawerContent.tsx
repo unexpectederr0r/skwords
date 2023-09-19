@@ -1,6 +1,6 @@
-import { useColorScheme, View, Text, StyleSheet} from 'react-native'
+import { useColorScheme, View, StyleSheet} from 'react-native'
 import { DrawerContentScrollView, DrawerItemList} from '@react-navigation/drawer'
-import { Button, Divider} from '@rneui/themed'
+import { Button, Divider, Icon, Text} from '@rneui/themed'
 import { useEffect, useState } from 'react'
 import { Image } from '@rneui/base'
 import {firebase} from '../../firebaseConfig'
@@ -64,20 +64,18 @@ export default function CustomDrawerContent(props){
             flex:2,
             //backgroundColor:'yellow',
             display:'flex',
-            flexDirection:'column',                    
+            flexDirection:'column',
+            marginLeft:5,
+            gap:10,
 
             //horizontal center
-            alignItems:'center',
+            //alignItems:'center',
             //alignContent:'center',
 
             //vertical center
             justifyContent:'space-between'
         },
-        nickNameAndPointsContainer:{
-            flex:1,
-            display:'flex'
-        },
-        userNameText:{
+        userNameTextContainer:{
             //backgroundColor:'red',
             flex:1,
             color: '#fff',
@@ -89,15 +87,31 @@ export default function CustomDrawerContent(props){
             //justifySelf:'flex-end'
             //marginBottom: 5,
         },        
-        userNicknameContainer:{
+        nickNameAndPointsContainer:{
             flex:1,
+            display:'flex',
+            alignSelf:'flex-start',
+            alignItems:'flex-start',
+            gap:3,
+            //backgroundColor:'lime',
+        },
+        userNicknameContainer:{
+            //backgroundColor:'red',
+            flex:1,
+            flexDirection:'row',
+            alignItems:'center',
+            justifyContent:'space-evenly',
+            gap:10
         },
         userSubtitleBodyContainer:{
-            //backgroundColor:'lime',
+            //backgroundColor:'orange',
             flex:1,
             //color: '#fff',
             display:'flex',
             flexDirection:'row',
+            alignItems:'center',
+            justifyContent:'space-evenly',
+            gap:10
             /* fontFamily: 'Roboto-Regular', */
             //marginRight: 5
         }
@@ -116,20 +130,22 @@ export default function CustomDrawerContent(props){
         
     return(
         <View style={styles.drawerContainerView}>
-            <DrawerContentScrollView {...props} contentContainerStyle={{ paddingTop: 0}}>                    
+            <DrawerContentScrollView {...props} contentContainerStyle={{ paddingTop: 0}}>
                 <View style={styles.userDataContainer}>                        
                     <Image source={{uri:DEFAULT_IMAGE}} style={styles.userImage}/>                            
                     <View style={styles.userTextContainerView}>
-                        <View style={styles.userNameText}>
+                        <View style={styles.userNameTextContainer}>
                             <Text>
                                 Greetings {statefulDocumentData.name}!
                             </Text>
                         </View>
                         <View style={styles.nickNameAndPointsContainer}>
                             <View style={styles.userNicknameContainer}>
+                                <Icon name='user-astronaut' type='font-awesome-5' size={20}/* color='#00aced' */ />
                                 <BoldText style={{color:'black'}}>{statefulDocumentData.nickname}</BoldText>
                             </View>
                             <View style={styles.userSubtitleBodyContainer}>                                
+                                <Icon name='coins' type='font-awesome-5' size={20}/>
                                 <BoldText style={{color:'black'}}>{statefulDocumentData.skPoints} SkPoints</BoldText>                                
                             </View>
                         </View>
@@ -138,8 +154,12 @@ export default function CustomDrawerContent(props){
                 <Divider/>
                 <DrawerItemList {...props} />
                 <Button containerStyle={{marginTop:20, marginHorizontal:5}} onPress={handleSignOut}>Log out</Button>                
+                
             </DrawerContentScrollView>
-            
+            <View style={{position:'absolute',marginHorizontal:5,bottom:50,display:'flex',alignContent:'center', alignItems:'center'}}>
+                    <Text style={{color:'grey'}}>SKWords v1.0 😀</Text>
+                    <Text style={{color:'grey'}}>Made by UoL student number: 190551560</Text>
+            </View>
         </View>
     )
 }

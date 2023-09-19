@@ -215,7 +215,7 @@ export default function Homescreen(props){
             <View style={styles.containerView}>
                     <View style={styles.featuredChallengeSectionContainer}>
                         <Text style={styles.featuredChallengeCommonTextStyle} h4>Featured challenge ⭐</Text>
-                        <Text style={styles.featuredChallengeCommonTextStyle}>Play it now and get rewarded double SKPoints 🥇</Text>
+                        <Text style={styles.featuredChallengeCommonTextStyle}>Play it today and get rewarded double SKPoints 🥇</Text>
                         <View style={styles.featuredChallengeContainer}>
                         {featuredChallengeData===null?
                             <GameCard key={1} isDisabled={enablePlayingChallengeOfTheDay===true?false:true} isLoading={true} isFeatured={true} style={{flex:1}} challengeIndexData={null} navigation={props.navigation} route={props.route}/>

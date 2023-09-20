@@ -31,31 +31,28 @@ export default function Homescreen(props){
     const lastUsedFetchChallengesArgumentsRef = useRef(null)
     const fetchChallenges = async (options?:FetchDocumentsFromCollectionOptionsInterface) => {
         setRefreshing(true)
-        fetchDocumentsFromCollection(FIREBASE_COLLECTIONS.CHALLENGES_INDEX_COLLECTION, options).then((querySnapshot)=>{
+        return fetchDocumentsFromCollection(FIREBASE_COLLECTIONS.CHALLENGES_INDEX_COLLECTION, options).then((querySnapshot)=>{
             const auxArrayOfChallengesIndexObject = querySnapshot.docs.map(document => ({...document.data(),challengeIndexUid:document.id}))            
             // Save the last document retrieved so Firebase can use it as a pagination delimiter for infinite scrolling. Reference: https://firebase.google.com/docs/firestore/query-data/query-cursors
             lastVisibleFirestoreDocumentSnapshotRef.current = querySnapshot.docs[querySnapshot.docs.length-1]
-            
             // Set stateful array of challenges
             setArrayOfChallengesIndexObject(auxArrayOfChallengesIndexObject)
-
             setRefreshing(false)
+            return auxArrayOfChallengesIndexObject
         }).catch((error)=>{
             Alert.alert('Error','An error occurred while fetching the challenges from the database',[{text:'OK',style:'default'}])
-            console.error('Error fetching data:', error)
         })
     }
 
     async function initialiseChallengeData(){
         // Save last used arguments to be able to reuse them for infinite scrolling
         lastUsedFetchChallengesArgumentsRef.current = {...{orderBy:'likeCount',limit:10,descending:true}}
-        await fetchChallenges({orderBy:'likeCount',limit:10,descending:true}).catch(()=>{
+        let resultArrayOfChallengesIndexObject = await fetchChallenges({orderBy:'likeCount',limit:10,descending:true}).catch(()=>{
             Alert.alert('Error','An error occurred while fetching the challenges from the database',[{text:'OK',style:'default'}])
         })
-
         // Select randomly a challenge to feature it
-        const randomArrayIndex = Math.floor(Math.random()*arrayOfChallengesIndexObject.length)
-        const randomChallengeIndexObject: challengeOfTheDayInterface = arrayOfChallengesIndexObject[randomArrayIndex]
+        const randomArrayIndex = Math.floor(Math.random()*resultArrayOfChallengesIndexObject.length)
+        const randomChallengeIndexObject: challengeOfTheDayInterface = resultArrayOfChallengesIndexObject[randomArrayIndex]
         // If a daily featured challenge already exists in the database, fetch and use that one, if it doesn't exist, use the one chosen randomly and upload it to the database
         fetchOrCreateChallengeOfTheDay(randomChallengeIndexObject).then(async (challengeIndexObject:challengeOfTheDayInterface)=>{
             let result = await wasChallengeOfTheDayAlreadyPlayed(challengeIndexObject.challengeIndexUid)
@@ -133,7 +130,6 @@ export default function Homescreen(props){
                 }
             }).catch((error)=>{
                 Alert.alert('Error','An error occurred while fetching the challenges from the database',[{text:'OK',style:'default'}])
-                console.error('Error fetching data:', error)
             })
             
         }else{

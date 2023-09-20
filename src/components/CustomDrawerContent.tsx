@@ -1,6 +1,6 @@
 import { useColorScheme, View, StyleSheet} from 'react-native'
 import { DrawerContentScrollView, DrawerItemList} from '@react-navigation/drawer'
-import { Button, Divider, Icon, Text} from '@rneui/themed'
+import { Button, Divider, Icon, Text, useTheme} from '@rneui/themed'
 import { useEffect, useState } from 'react'
 import { Image } from '@rneui/base'
 import {firebase} from '../../firebaseConfig'
@@ -15,7 +15,8 @@ const DEFAULT_IMAGE = Image.resolveAssetSource(Images.defaultProfileAvatar).uri
 export default function CustomDrawerContent(props){
 
     const { sharedValue: userMetadataSharedValue } = useUserMetadataSharedValue()
-    let colorMode = useColorScheme();
+    let colorMode = useColorScheme()
+    const { theme, updateTheme } = useTheme()
 
     const [statefulDocumentData, setStatefulDocumentData] = useState<UserDocumentInterface>(userMetadataSharedValue.userDataDocument)
 
@@ -65,7 +66,7 @@ export default function CustomDrawerContent(props){
             //backgroundColor:'yellow',
             display:'flex',
             flexDirection:'column',
-            marginLeft:5,
+            marginLeft:10,
             gap:10,
 
             //horizontal center
@@ -135,17 +136,17 @@ export default function CustomDrawerContent(props){
                     <Image source={{uri:DEFAULT_IMAGE}} style={styles.userImage}/>                            
                     <View style={styles.userTextContainerView}>
                         <View style={styles.userNameTextContainer}>
-                            <Text>
+                            <Text style={{color:'black'}}>
                                 Greetings {statefulDocumentData.name}!
                             </Text>
                         </View>
                         <View style={styles.nickNameAndPointsContainer}>
                             <View style={styles.userNicknameContainer}>
-                                <Icon name='user-astronaut' type='font-awesome-5' size={20}/* color='#00aced' */ />
+                                <Icon name='user-astronaut' type='font-awesome-5' size={20} color={theme.colors.secondary} />
                                 <BoldText style={{color:'black'}}>{statefulDocumentData.nickname}</BoldText>
                             </View>
                             <View style={styles.userSubtitleBodyContainer}>                                
-                                <Icon name='coins' type='font-awesome-5' size={20}/>
+                                <Icon name='coins' type='font-awesome-5' size={17} color={theme.colors.secondary}/>
                                 <BoldText style={{color:'black'}}>{statefulDocumentData.skPoints} SkPoints</BoldText>                                
                             </View>
                         </View>

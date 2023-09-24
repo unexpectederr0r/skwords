@@ -10,9 +10,21 @@ import { useUserMetadataSharedValue } from "../context/UserMetadataProvider"
 import { updateStatsOfPlayedChallenge } from "../components/utils/firebaseUtils/updateStatsOfPlayedChallenge"
 import { updateSkPointsHistory } from "../components/utils/firebaseUtils/updateSkPointsHistory"
 
+/*
+==========================================
+==========================================
+==========================================
+
+ATTENTION: This file was developed upon the code originally found in the following website: https://www.reactnativeschool.com/build-a-wordle-clone-with-react-native
+The keyboard and overall Wordle resemblant UI was copied AS IS from that website and is not of my authorship.
+The rest of the logic that integrates the copied UI code is mine.
+
+==========================================
+==========================================
+========================================== 
+*/
 
 
-//let challengeData = null
 let colorMode = null
 
 interface GameBodyProps {
@@ -112,13 +124,13 @@ export default function GameBody({isFeaturedRef, challengeData, challengeIndexDa
 
   useEffect(() => {
     if(timerRunOut){
-      console.log("lost")
       handlePlayerLost()
     }
   },[timerRunOut])
 
   const {height: screenHeight, width: screenWidth} = useWindowDimensions()
 
+  // As mentioned above, the styling was adapted from the following source https://www.reactnativeschool.com/build-a-wordle-clone-with-react-native 
   const styles = StyleSheet.create({
     guessRow: {
       flexDirection: "row",
@@ -228,6 +240,7 @@ export default function GameBody({isFeaturedRef, challengeData, challengeIndexDa
     }
   })
 
+  // As mentioned above, the following component was adapted from the following original source https://www.reactnativeschool.com/build-a-wordle-clone-with-react-native
   const CharacterComponent = ({ index, playerCharacter, wordToDiscover, guessAlreadyUsed}) => {
   
     let wordLetter = wordToDiscover[index]
@@ -255,6 +268,7 @@ export default function GameBody({isFeaturedRef, challengeData, challengeIndexDa
     )
   }
   
+  // As mentioned above, the following component was adapted from the following original source https://www.reactnativeschool.com/build-a-wordle-clone-with-react-native
   const GuessRow = ({guess,wordToDiscover,guessAlreadyUsed}) => {    
     return (
       <View style={styles.guessRow}>
@@ -267,6 +281,7 @@ export default function GameBody({isFeaturedRef, challengeData, challengeIndexDa
     )
   }
   
+  // As mentioned above, the following component was adapted from the following original source https://www.reactnativeschool.com/build-a-wordle-clone-with-react-native
   const KeyboardRow = ({ arrayOfCharacters, onKeyPress}) => (
     <View style={styles.keyboardRow}>
       {arrayOfCharacters.map(character => (
@@ -279,6 +294,7 @@ export default function GameBody({isFeaturedRef, challengeData, challengeIndexDa
     </View>
   )
   
+  // As mentioned above, the following component was adapted from the following original source https://www.reactnativeschool.com/build-a-wordle-clone-with-react-native
   const KeyboardComponent = ({ onKeyPress }) => {
     const charactersInKeyboardFirstRow = ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"]
     const charactersInKeyboardSecondRow = ["A", "S", "D", "F", "G", "H", "J", "K", "L"]
@@ -311,41 +327,24 @@ export default function GameBody({isFeaturedRef, challengeData, challengeIndexDa
       content===true?(totalHintsUsed+=1):null
     })
 
-    /* console.log('characterHintUsedMapArray',characterHintUsedMapArray)
-    console.log('characterHintUsedMapArray.length',characterHintUsedMapArray.length) */
-
    //const secondsLeft:number = countdownTimerMinutesRef.current * 60 + countdownTimerSecondsRef.current
    const secondsLeft:number = getSecondsLeft()
-   /* console.log('countdownTimerMinutesRef.current',countdownTimerMinutesRef.current)
-   console.log('countdownTimerSecondsRef.current',countdownTimerSecondsRef.current)
-   console.log('secondsLeft',secondsLeft)
-   console.log('maxNumberOfSeconds',maxNumberOfSeconds) */
    const timeFactorRatio:number = (secondsLeft / maxNumberOfSeconds)
 
-    /* console.log('totalHintsUsed',totalHintsUsed)
-    console.log('characterHintUsedMapArray.length',characterHintUsedMapArray.length) */
    const hintsUsedFactorRatio:number = 1 -  (1 * (totalHintsUsed / characterHintUsedMapArray.length))
 
-   // ******************** should this be proportional or more like 70% 30%
    let averageHintsAndTimeFactorsRatio = (timeFactorRatio+hintsUsedFactorRatio)/2
    // the score can never be zero
    averageHintsAndTimeFactorsRatio = averageHintsAndTimeFactorsRatio==0?0.01:averageHintsAndTimeFactorsRatio
-   /* console.log('timeFactor',timeFactorRatio)
-   console.log('hintsUsedFactorRatio',hintsUsedFactorRatio)
-   console.log('averageHintsAndTimeFactorsRatio',averageHintsAndTimeFactorsRatio) */
-   
    
     // difficuly in the database ranges from 0 to 6, being 0 the easiest difficulty and 6 the hardest, 1 will be added to calculate the ratio and avoid dealing with 0
     const difficultyFactor:number = challengeIndexData.difficulty+1
 
-
-    
     return parseFloat((((difficultyFactor*averageHintsAndTimeFactorsRatio)/difficultyFactor)*100).toFixed(2))
   }
 
   function calculateAwardedSkPoints(playerPerformanceAsPercentage):number{       
     const challengeIsFeaturedMultiplier = (isFeaturedRef.current===true?GAME_CONSTANTS.SKPOINTS_MULTIPLIER_WHEN_CHALLENGE_IS_FEATURED:1)
-    console.log("challengeIsFeaturedMultiplier",challengeIsFeaturedMultiplier)
     const awardedPoints = Math.floor((challengeIndexData.difficulty+1) * GAME_CONSTANTS.CHALLENGE_SUCESSFULLY_SOLVED_MIN_AWARDED_POINTS * (playerPerformanceAsPercentage/100)) * challengeIsFeaturedMultiplier
     return (awardedPoints)>0?awardedPoints:1
   }
@@ -366,8 +365,6 @@ export default function GameBody({isFeaturedRef, challengeData, challengeIndexDa
     updateNumberOfSkPointsBy(USER_UID,awardedSkPoints).then(async ()=>{
         const timeTakenInSeconds = maxNumberOfSeconds - getSecondsLeft()
       updateStatsOfPlayedChallenge(USER_UID,playerScoreAsPercentage,timeTakenInSeconds,awardedSkPoints).then(()=>{
-          
-          console.log("successful update of stats")
       }).catch(()=>{
           Alert.alert('Warning', "There was an error updating your statistics in the database, the 'My Stats' tab may not reflect accurate information", [{text: 'OK',}])    
       })
@@ -385,7 +382,6 @@ export default function GameBody({isFeaturedRef, challengeData, challengeIndexDa
     setReloadMemoizedCountdownTimer(true)
     const playerScoreAsPercentage:number = calculatePlayerScoreAsPercentage()    
     const penalizedSkPoints:number = calculatePenalizedSkPoints(playerScoreAsPercentage)
-    //console.log('penalizedSkPoints',penalizedSkPoints)
     // Notice the negative number (-1) mutipliying the number of penalized skPoints
     await updateSkPointsHistory(USER_UID,((-1)*penalizedSkPoints)).catch(()=>{
       Alert.alert('Warning', "There was an error updating your statistics in the database, the 'My Stats' tab may not reflect accurate information", [{text: 'OK',}])    
@@ -395,7 +391,6 @@ export default function GameBody({isFeaturedRef, challengeData, challengeIndexDa
         const timeTakenInSeconds = maxNumberOfSeconds - getSecondsLeft()
         const scoreToStoreInDb = 0
       updateStatsOfPlayedChallenge(USER_UID,scoreToStoreInDb,timeTakenInSeconds,((-1)*penalizedSkPoints)).then(()=>{
-          console.log("successful update of stats")
       }).catch(()=>{
           Alert.alert('Warning', "There was an error updating your statistics in the database, the 'My Stats' tab may not reflect accurate information", [{text: 'OK',}])    
       })
@@ -422,8 +417,7 @@ export default function GameBody({isFeaturedRef, challengeData, challengeIndexDa
         lengthOfCurrentWordGuess+=1
       }
     }
-    
-    
+  
     // When the user presses "submit" in the virtual keyboard it means that a word guess is submitted to check whether it is the word to be discovered or not
     if (virtualKeyboardInputCharacter === "SUBMIT") {
       // If the length of the current guess is lower than the length of the word to be discovered return
@@ -482,7 +476,6 @@ export default function GameBody({isFeaturedRef, challengeData, challengeIndexDa
 
   const ThemeAwareSafeAreaView = (props) => {
     const { theme, updateTheme } = useTheme()           
-    //console.log('playscreen ThemeAwareSafeAreaView theme.colors.background',theme.colors.background)
     return(
         <SafeAreaView style={{backgroundColor:theme.colors.background, justifyContent: "space-between",flex: 1,}}>
             {props.children}
@@ -666,6 +659,7 @@ export default function GameBody({isFeaturedRef, challengeData, challengeIndexDa
           <View>        
               {
                 Object.keys(playerGuessesEntriesObject).map(function (key,index) {
+                  // As mentioned above, the following code was adapted from the following original source https://www.reactnativeschool.com/build-a-wordle-clone-with-react-native
                   return(
                     <GuessRow
                         key={index}

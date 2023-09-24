@@ -157,7 +157,7 @@ export default function CustomDrawerContent(props){
                 <Button containerStyle={{marginTop:20, marginHorizontal:5}} onPress={handleSignOut}>Log out</Button>                
                 
             </DrawerContentScrollView>
-            <View style={{position:'absolute',marginHorizontal:5,bottom:50,display:'flex',alignContent:'center', alignItems:'center'}}>
+            <View style={{position:'absolute',marginHorizontal:5,bottom:50,display:'flex',alignSelf:'center',alignContent:'center', alignItems:'center', width:'100%'}}>
                     <Text style={{color:'grey'}}>SKWords v1.0 😀</Text>
                     <Text style={{color:'grey'}}>Made by UoL student number: 190551560</Text>
             </View>

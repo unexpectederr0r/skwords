@@ -1,15 +1,13 @@
 import { PieChart } from "react-native-gifted-charts"
 import { View } from "react-native"
 import { Text } from "@rneui/themed"
-
 /*
     ================================
     ATTENTION: All code in this React Component is based on the template from the documentation of the react native library "react-native-gifted-charts" and can be found in the following website: https://gifted-charts.web.app
     ================================
 */
 export default function StatsPieChartComponent({orderedArrayOfMostPlayedCategories,...props}){
-
-    /// data is already ORDERED
+    /// Keep in mind, the array contains the names of the most played categories ordered in descending order 
     let pieData = []
     let totalSkChallengesPlayed = 0
     for (let index = 0; index < orderedArrayOfMostPlayedCategories.length; index++) {
